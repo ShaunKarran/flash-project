@@ -27,11 +27,11 @@
 
 # Target file name (without extension).
 # You will need to replace "name_of_file" with your file name without the .c extension
-TARGET = ./test/gfx_test
+TARGET = ./test/st7565r_test
 
 
 # List C source files here. (C dependencies are automatically generated.)
-SRC = $(TARGET).c ./src/cpu.c ./src/gfx.c ./src/lcd5110.c ./src/spi.c
+SRC = $(TARGET).c ./src/cpu.c ./src/gfx.c ./src/lcd5110.c ./src/spi.c ./src/st7565r.c
 
 
 # MCU name, you MUST set this to match the board you are using
