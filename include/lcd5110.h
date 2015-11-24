@@ -25,9 +25,6 @@
 #define LCD5110_CONTRAST_LOW    0xAF
 #define LCD5110_CONTRAST_MID    0xBF
 #define LCD5110_CONTRAST_HIGH   0xCF
-/* Tells the LCD if the write is command or data. */
-#define LCD5110_CMD  0
-#define LCD5110_DATA 1
 
 struct LCD5110_t {
     PORT_t        *port;
@@ -39,7 +36,9 @@ struct LCD5110_t {
 void lcd5110_init(  unsigned char contrast, PORT_t *port, unsigned char dc_pin,
                     unsigned char rst_pin, unsigned char sce_pin);
 
-void lcd5110_write_byte(unsigned char data, unsigned char dc);
+void lcd5110_write_data(unsigned char data);
+
+void lcd5110_write_command(unsigned char cmd);
 
 void lcd5110_write_array(unsigned char *array, unsigned short length);
 

@@ -22,27 +22,32 @@ void lcd5110_init(  unsigned char contrast, PORT_t *port, unsigned char dc_pin,
     _delay_us(1);
     lcd.port->OUTSET = lcd.rst_pin;
 
-    lcd5110_write_byte(LCD5110_EXT_SET,      LCD5110_CMD);
-    lcd5110_write_byte(contrast,             LCD5110_CMD);
-    lcd5110_write_byte(LCD5110_TEMP_COEF,    LCD5110_CMD);
-    lcd5110_write_byte(LCD5110_BIAS,         LCD5110_CMD);
+    lcd5110_write_command(LCD5110_EXT_SET);
+    lcd5110_write_command(contrast);
+    lcd5110_write_command(LCD5110_TEMP_COEF);
+    lcd5110_write_command(LCD5110_BIAS);
 
-    lcd5110_write_byte(LCD5110_STD_SET,      LCD5110_CMD);
-    lcd5110_write_byte(LCD5110_DISP_NORM,    LCD5110_CMD);
+    lcd5110_write_command(LCD5110_STD_SET);
+    lcd5110_write_command(LCD5110_DISP_NORM);
 
     lcd5110_clear();
 }
 
-void lcd5110_write_byte(unsigned char data, unsigned char dc)
+void lcd5110_write_data(unsigned char data)
 {
-    if (dc == LCD5110_DATA) {
-        lcd.port->OUTSET = lcd.dc_pin;
-    } else if (dc == LCD5110_CMD) {
-        lcd.port->OUTCLR = lcd.dc_pin;
-    }
+    lcd.port->OUTSET = lcd.dc_pin;
 
     lcd.port->OUTCLR = lcd.sce_pin;
     spi_write(&spi_master, data);
+    lcd.port->OUTSET = lcd.sce_pin;
+}
+
+void lcd5110_write_command(unsigned char cmd)
+{
+    lcd.port->OUTCLR = lcd.dc_pin;
+
+    lcd.port->OUTCLR = lcd.sce_pin;
+    spi_write(&spi_master, cmd);
     lcd.port->OUTSET = lcd.sce_pin;
 }
 
@@ -60,12 +65,12 @@ void lcd5110_write_array(unsigned char *array, unsigned short length)
 void lcd5110_clear(void)
 {
     for (int i = 0; i < LCD5110_BYTES; i++) {
-        lcd5110_write_byte(0x00, LCD5110_DATA);
+        lcd5110_write_data(0x00);
     }
 }
 
 void lcd5110_position(unsigned char x, unsigned char y)
 {
-    lcd5110_write_byte(LCD5110_X_ADDR | x, LCD5110_CMD);
-    lcd5110_write_byte(LCD5110_Y_ADDR | y, LCD5110_CMD);
+    lcd5110_write_command(LCD5110_X_ADDR | x);
+    lcd5110_write_command(LCD5110_Y_ADDR | y);
 }
