@@ -8,9 +8,9 @@ void st7565r_init(void)
     st7564r_config();
 
     lcd.rst_port->OUTCLR = lcd.rst_pin;
-    _delay_us(10);
+    _delay_us(5);
     lcd.rst_port->OUTSET = lcd.rst_pin;
-    _delay_us(10);
+    _delay_us(5);
 
     lcd.cs_port->OUTSET  = lcd.cs_pin;
     lcd.clk_port->OUTSET = lcd.clk_pin;
@@ -27,9 +27,6 @@ void st7565r_init(void)
     st7565r_write_command(ST7565R_CMD_BOOSTER_RATIO_2X_3X_4X);
     st7565r_write_command(ST7565R_CMD_VOLTAGE_RESISTOR_RATIO_1);
 
-    st7565r_write_command(ST7565R_CMD_ELECTRONIC_VOLUME_MODE_SET);
-	st7565r_write_command(ST7565R_CMD_ELECTRONIC_VOLUME(30));
-
     st7565r_write_command(ST7565R_CMD_DISPLAY_ON);
 }
 
@@ -45,7 +42,7 @@ void st7565r_write_data(unsigned char data)
         } else {
             lcd.data_port->OUTCLR = lcd.data_pin;
         }
-        _delay_us(2);
+        _delay_us(1);
         lcd.clk_port->OUTSET = lcd.clk_pin;
     }
     lcd.cs_port->OUTSET = lcd.cs_pin;
@@ -63,7 +60,7 @@ void st7565r_write_command(unsigned char cmd)
         } else {
             lcd.data_port->OUTCLR = lcd.data_pin;
         }
-        _delay_us(2);
+        _delay_us(1);
         lcd.clk_port->OUTSET = lcd.clk_pin;
     }
     lcd.cs_port->OUTSET = lcd.cs_pin;
