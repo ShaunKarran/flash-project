@@ -10,13 +10,6 @@
 #define LCD_RST PIN3_bm
 #define LCD_SCE SPI_SS_bm
 
-void gfx_draw_array(short *array, size_t num_items)
-{
-    for (int i = 0; i < num_items - 2; i += 2) {
-        gfx_draw_line(array[i], array[i + 1], array[i + 2], array[i + 3]);
-    }
-}
-
 int main(void)
 {
     struct GFX_Buffer_t gfx;
@@ -27,11 +20,7 @@ int main(void)
 
     gfx_bind_buffer(&gfx);
 
-    // gfx_draw_string("Xmega is best!", ASCII_FONT, 0, 0);
-    // gfx_render();
-
-    short array[6] = {0, 0, 20, 5, 0, 10};
-    gfx_draw_array(array, 6);
+    gfx_draw_string("Xmega is best!", ASCII_FONT, 0, 0);
     gfx_render();
 
     while (1);
