@@ -6,6 +6,7 @@
 #include <util/delay.h>
 
 #include "bitwise.h"
+#include "usart_spi.h"
 
 /* Display pixel dimensions. */
 #define ST7565R_WIDTH  128
@@ -53,14 +54,10 @@
 #define ST7565R_CMD_READ_MODIFY_WRITE              0xE0
 
 struct ST7565R_t {
-    PORT_t        *data_port;
-    PORT_t        *clk_port;
     PORT_t        *a0_port;
     PORT_t        *cs_port;
     PORT_t        *rst_port;
     PORT_t        *bl_port;
-    unsigned char data_pin;
-    unsigned char clk_pin;
     unsigned char a0_pin;
     unsigned char cs_pin;
     unsigned char rst_pin;

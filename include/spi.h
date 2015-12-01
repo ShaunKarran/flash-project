@@ -11,8 +11,8 @@
 #define SPI_SCK_bm  PIN7_bm
 
 struct SPI_Master_t {
-    SPI_t           *module;
-    PORT_t          *port;
+    SPI_t  *module;
+    PORT_t *port;
 };
 
 void spi_init_master(struct SPI_Master_t *spi,

@@ -15,12 +15,12 @@ int main(void)
 
     // gfx_bind_buffer(&gfx);
 
-    st7565r_write_data(0xFF);
-
     // gfx_draw_string("Xmega is best!", ASCII_FONT, 0, 0);
     // gfx_render();
 
-    while (1);
+    while (1) {
+        st7565r_write_data(0xFF);
+    }
 
     return 0;
 }
