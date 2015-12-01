@@ -47,8 +47,9 @@ void gl2d_draw(size_t num_verticies)
 static void gl2d_fill_faces()
 {
     int buffer_position;
-    bool previous_pixel, this_pixel;
-    bool inside;
+    bool previous_pixel = false;
+    bool this_pixel     = false;
+    bool inside         = false;
 
     for (int y = 0; y < gl2d.height; y++) {
         inside = false;
@@ -59,9 +60,12 @@ static void gl2d_fill_faces()
             previous_pixel = this_pixel;
             this_pixel = get_bit(gl2d.frame_buffer[buffer_position], y % 8);
 
-            if (this_pixel && !previous_pixel) {
+            if (previous_pixel && !this_pixel) {
                 inside = !inside;
+            } else if (previous_pixel && this_pixel) { /* Horizontal edge. */
+                inside = true;
             }
+
             if (inside) {
                 set_bit(gl2d.frame_buffer[buffer_position], y % 8);
             }

@@ -187,7 +187,7 @@ bool gfx_clr_pixel(short x, short y)
 	return false;
 }
 
-char gfx_get_pixel(short x, short y)a
+char gfx_get_pixel(short x, short y)
 {
 	short byte = gfx_buffer_position(x, y);
 

@@ -20,15 +20,15 @@ int main(void) {
     lcd5110_init(LCD5110_CONTRAST_MID, &PORTC, LCD_DC, LCD_RST, LCD_SCE);
     gl2d_init(LCD5110_WIDTH, LCD5110_HEIGHT, lcd5110_write_array);
 
-    vertex_array[0] = 0;
+    vertex_array[0] = 5;
     vertex_array[1] = 10;
-    vertex_array[2] = 10;
-    vertex_array[3] = 10;
-    vertex_array[4] = 10;
-    vertex_array[5] = 0;
-    vertex_array[6] = 0;
-    vertex_array[7] = 0;
-    vertex_array[8] = 0;
+    vertex_array[2] = 15;
+    vertex_array[3] = 20;
+    vertex_array[4] = 20;
+    vertex_array[5] = 7;
+    vertex_array[6] = 8;
+    vertex_array[7] = 2;
+    vertex_array[8] = 5;
     vertex_array[9] = 10;
 
     gl2d_bind_vertex_array(vertex_array);
