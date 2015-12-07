@@ -1,41 +1,39 @@
 
 #include <stdio.h>
 
-#include "matlib.h"
+#include "ml.h"
 
 #define M 3
 #define N 3
 
 int main(void)
 {
-    struct MATLIB_t mat_a;
-    struct MATLIB_t mat_b;
-    struct MATLIB_t vec_a;
+    mat3_t mat_a;
+    mat3_t mat_b;
+    vec3_t vec_a;
 
-    float mat_a_values[M * N] = {   1, 2, 3,
-                                4, 5, 6,
-                                7, 8, 9};
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+            mat_a.values[i][j] = i * 3 + j + 1;
+        }
+    }
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+            mat_b.values[i][j] = 9 - (i * 3 + j);
+        }
+    }
+    for (int i = 0; i < 3; i++) {
+        vec_a.values[i] = i + 1;
+    }
 
-    float mat_b_values[M][N] = {    {9, 8, 7},
-                                {6, 5, 4},
-                                {3, 2, 1}};
+    ml_print_mat3(&mat_a); printf("\n");
+    ml_print_vec3(&vec_a); printf("\n");
 
-    float vec_a_values[M] = {1, 2, 3};
+    vec_a = ml_multiply_mat3_vec3(&mat_a, &vec_a);
+    ml_print_vec3(&vec_a); printf("\n");
 
-    matlib_create(&mat_a, mat_a_values, M, N);
-    matlib_create(&mat_b, *mat_b_values, M, N);
-
-    matlib_print(&mat_a); printf("\n");
-    matlib_print(&mat_b); printf("\n");
-
-    mat_a = matlib_multiply(&mat_a, &mat_b);
-    matlib_print(&mat_a); printf("\n");
-
-    matlib_create(&vec_a, vec_a_values, 1, M);
-
-    matlib_print(&vec_a); printf("\n");
-    vec_a = matlib_multiply(&vec_a, &mat_b);
-    matlib_print(&vec_a); printf("\n");
+    mat_a = ml_multiply_mat3_mat3(&mat_a, &mat_b);
+    ml_print_mat3(&mat_a); printf("\n");
 
     return 0;
 }
