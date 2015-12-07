@@ -5,6 +5,7 @@
 #include "cpu.h"
 #include "gl2d.h"
 #include "lcd5110.h"
+#include "ml.h"
 
 /* LCD pin definitions. */
 #define LCD_DC  PIN2_bm
@@ -36,13 +37,13 @@ int main(void) {
     while (1) {
         gl2d_clear_buffer();
 
-        gl2d_mat3_identity(mv_matrix);
+        ml_mat3_identity(&mv_matrix);
+        mv_matrix.values[0][2] = i; // Move i in x direction.
+        mv_matrix.values[1][2] = i; // Move i in y direction.
         i++;
-        mv_matrix[0][2] = i;
-        mv_matrix[1][2] = i;
 
         gl2d_bind_vertex_array(vertex_array, NUM_VERTICES * 2);
-        gl2d_set_mvmatrix(&mv_matrix);
+        gl2d_set_mvmatrix(mv_matrix);
 
         gl2d_draw(NUM_VERTICES);
 

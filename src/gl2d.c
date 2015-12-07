@@ -14,7 +14,7 @@
 static struct GL2D_t gl2d;
 
 static float  *VERTEX_ARRAY;
-static mat3_t *MV_MATRIX;
+static mat3_t MV_MATRIX;
 
 void gl2d_init( size_t width, size_t height,
                 void (*render)(unsigned char *, unsigned short))
@@ -36,7 +36,7 @@ void gl2d_bind_vertex_array(float *vertex_array, size_t array_length)
     }
 }
 
-void gl2d_set_mvmatrix(mat3_t *mv_matrix)
+void gl2d_set_mvmatrix(mat3_t mv_matrix)
 {
     MV_MATRIX = mv_matrix;
 }
@@ -66,14 +66,14 @@ static void gl2d_vertex_shader(size_t num_verticies)
     vec3_t vertex;
 
     for (int i = 0; i < num_verticies * 2; i += 2) {
-        vertex.x = VERTEX_ARRAY[i];
-        vertex.y = VERTEX_ARRAY[i + 1];
-        vertex.z = 1;
+        vertex.values[0] = VERTEX_ARRAY[i];
+        vertex.values[1] = VERTEX_ARRAY[i + 1];
+        vertex.values[2] = 1;
 
-        vertex = gl2d_multiply_mat3_vec3(*MV_MATRIX, vertex);
+        vertex = ml_multiply_mat3_vec3(&MV_MATRIX, &vertex);
 
-        VERTEX_ARRAY[i] = vertex.x;
-        VERTEX_ARRAY[i + 1] = vertex.y;
+        VERTEX_ARRAY[i]     = vertex.values[0];
+        VERTEX_ARRAY[i + 1] = vertex.values[2];
     }
 }
 
@@ -158,28 +158,4 @@ static void gl2d_draw_pixel(int x, int y)
         unsigned char bit = y % 8;
         set_bit(gl2d.frame_buffer[buffer_position], bit);
     }
-}
-
-void gl2d_mat3_identity(mat3_t a)
-{
-    for (int m = 0; m < 3; m++) {
-        for (int n = 0; n < 3; n++) {
-            if (m == n) {
-                a[m][n] = 1;
-            } else {
-                a[m][n] = 0;
-            }
-        }
-    }
-}
-
-vec3_t gl2d_multiply_mat3_vec3(mat3_t matrix, vec3_t vector)
-{
-    vec3_t temp;
-
-    temp.x = matrix[0][0] * vector.x + matrix[0][1] * vector.y + matrix[0][2] * vector.z;
-    temp.y = matrix[1][0] * vector.x + matrix[1][1] * vector.y + matrix[1][2] * vector.z;
-    temp.z = matrix[2][0] * vector.x + matrix[2][1] * vector.y + matrix[2][2] * vector.z;
-
-    return temp;
 }
