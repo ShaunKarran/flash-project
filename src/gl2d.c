@@ -13,7 +13,8 @@
 
 static struct GL2D_t gl2d;
 
-static float *VERTEX_ARRAY;
+static float  *VERTEX_ARRAY;
+static mat3_t *MV_MATRIX;
 
 void gl2d_init( size_t width, size_t height,
                 void (*render)(unsigned char *, unsigned short))
@@ -26,22 +27,54 @@ void gl2d_init( size_t width, size_t height,
     gl2d.frame_buffer = calloc(gl2d.length, sizeof(unsigned char));
 }
 
-void gl2d_bind_vertex_array(float *vertex_array)
+void gl2d_bind_vertex_array(float *vertex_array, size_t array_length)
 {
-    VERTEX_ARRAY = vertex_array;
+    VERTEX_ARRAY = realloc(VERTEX_ARRAY, array_length);
+
+    for (int i = 0; i < array_length; i++) {
+        VERTEX_ARRAY[i] = vertex_array[i];
+    }
+}
+
+void gl2d_set_mvmatrix(mat3_t *mv_matrix)
+{
+    MV_MATRIX = mv_matrix;
 }
 
 void gl2d_draw(size_t num_verticies)
 {
-    // gl2d_vertex_shader();
-    // gl2d_projection();
+    gl2d_vertex_shader(num_verticies);
+    // gl2d_projection(num_verticies);
     // gl2d_normalise_coords();
     // gl2d_clipper();
     // gl2d_window_coords();
     gl2d_draw_lines(num_verticies);
-    gl2d_fill_faces();
+    // gl2d_fill_faces();
 
     gl2d.render(gl2d.frame_buffer, gl2d.length);
+}
+
+void gl2d_clear_buffer()
+{
+    for (int i = 0; i < gl2d.length; i++) {
+        gl2d.frame_buffer[i] = 0x00;
+    }
+}
+
+static void gl2d_vertex_shader(size_t num_verticies)
+{
+    vec3_t vertex;
+
+    for (int i = 0; i < num_verticies * 2; i += 2) {
+        vertex.x = VERTEX_ARRAY[i];
+        vertex.y = VERTEX_ARRAY[i + 1];
+        vertex.z = 1;
+
+        vertex = gl2d_multiply_mat3_vec3(*MV_MATRIX, vertex);
+
+        VERTEX_ARRAY[i] = vertex.x;
+        VERTEX_ARRAY[i + 1] = vertex.y;
+    }
 }
 
 static void gl2d_fill_faces()
@@ -75,7 +108,7 @@ static void gl2d_fill_faces()
 
 static void gl2d_draw_lines(size_t num_verticies)
 {
-    for (int i = 0; i < num_verticies - 2; i += 2) {
+    for (int i = 0; i < num_verticies * 2 - 2; i += 2) {
         gl2d_draw_line( VERTEX_ARRAY[i], VERTEX_ARRAY[i + 1],
                         VERTEX_ARRAY[i + 2], VERTEX_ARRAY[i + 3]);
     }
@@ -125,4 +158,28 @@ static void gl2d_draw_pixel(int x, int y)
         unsigned char bit = y % 8;
         set_bit(gl2d.frame_buffer[buffer_position], bit);
     }
+}
+
+void gl2d_mat3_identity(mat3_t a)
+{
+    for (int m = 0; m < 3; m++) {
+        for (int n = 0; n < 3; n++) {
+            if (m == n) {
+                a[m][n] = 1;
+            } else {
+                a[m][n] = 0;
+            }
+        }
+    }
+}
+
+vec3_t gl2d_multiply_mat3_vec3(mat3_t matrix, vec3_t vector)
+{
+    vec3_t temp;
+
+    temp.x = matrix[0][0] * vector.x + matrix[0][1] * vector.y + matrix[0][2] * vector.z;
+    temp.y = matrix[1][0] * vector.x + matrix[1][1] * vector.y + matrix[1][2] * vector.z;
+    temp.z = matrix[2][0] * vector.x + matrix[2][1] * vector.y + matrix[2][2] * vector.z;
+
+    return temp;
 }
