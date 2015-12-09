@@ -21,15 +21,17 @@ int main(void) {
     cpu_set_speed(CPU_32MHz);
     lcd5110_init(LCD5110_CONTRAST_MID, &PORTC, LCD_DC, LCD_RST, LCD_SCE);
     gl2d_init(LCD5110_WIDTH, LCD5110_HEIGHT, lcd5110_write_array);
+    gl2d_orthographic(0, LCD5110_WIDTH, 0, LCD5110_HEIGHT);
 
+    /* Each pair of values defines a vertex in the square. */
     vertex_array[0] = 0;
     vertex_array[1] = 0;
-    vertex_array[2] = 10;
+    vertex_array[2] = 1;
     vertex_array[3] = 0;
-    vertex_array[4] = 10;
-    vertex_array[5] = 10;
+    vertex_array[4] = 1;
+    vertex_array[5] = 1;
     vertex_array[6] = 0;
-    vertex_array[7] = 10;
+    vertex_array[7] = 1;
     vertex_array[8] = 0;
     vertex_array[9] = 0;
 
@@ -43,7 +45,7 @@ int main(void) {
         i++;
 
         gl2d_bind_vertex_array(vertex_array, NUM_VERTICES * 2);
-        gl2d_set_mvmatrix(mv_matrix);
+        gl2d_bind_mvmatrix(&mv_matrix);
 
         gl2d_draw(NUM_VERTICES);
 

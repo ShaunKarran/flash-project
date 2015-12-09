@@ -28,15 +28,17 @@ struct GL2D_t {
 void gl2d_init( size_t width, size_t height,
                 void (*render)(unsigned char *, unsigned short));
 
+void gl2d_viewport(unsigned short width, unsigned short height);
+
+void gl2d_orthographic(unsigned short left, unsigned short right, unsigned short bottom, unsigned short top);
+
 void gl2d_bind_vertex_array(float *vertex_array, size_t array_length);
 
-void gl2d_set_mvmatrix(mat3_t mv_matrix);
+void gl2d_bind_mvmatrix(mat3_t *mv_matrix);
 
 void gl2d_draw(size_t num_verticies);
 
 void gl2d_clear_buffer();
-
-static void gl2d_vertex_shader(size_t num_verticies);
 
 static void gl2d_fill_faces();
 

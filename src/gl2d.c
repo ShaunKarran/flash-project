@@ -14,7 +14,9 @@
 static struct GL2D_t gl2d;
 
 static float  *VERTEX_ARRAY;
-static mat3_t MV_MATRIX;
+static mat3_t *MV_MATRIX;
+static mat3_t PROJECTION_MATRIX;
+static mat3_t VIEWPORT_MATRIX;
 
 void gl2d_init( size_t width, size_t height,
                 void (*render)(unsigned char *, unsigned short))
@@ -25,6 +27,32 @@ void gl2d_init( size_t width, size_t height,
     gl2d.render = render;
 
     gl2d.frame_buffer = calloc(gl2d.length, sizeof(unsigned char));
+
+    ml_mat3_identity(&PROJECTION_MATRIX);
+    ml_mat3_identity(&VIEWPORT_MATRIX);
+    gl2d_viewport(width, height);
+}
+
+void gl2d_viewport(unsigned short width, unsigned short height)
+{
+    /* Scale from NDC to viewport size, and translate to viewport location.
+     * Note: Viewport 0, 0 is ALWAYS screen 0, 0. So use width & height instead of top, bottom... etc.
+     */
+    VIEWPORT_MATRIX.values[0][2] = width / 2; /* Centre on the x axis. */
+    VIEWPORT_MATRIX.values[1][2] = height / 2; /* Centre on the y axis. */
+    VIEWPORT_MATRIX.values[0][0] = width / 2; /* Centre on the x axis. */
+    VIEWPORT_MATRIX.values[1][1] = height / 2; /* Centre on the y axis. */
+}
+
+void gl2d_orthographic(unsigned short left, unsigned short right, unsigned short bottom, unsigned short top)
+{
+    /* Transform the viewport to clip coords by centring on 0, 0. */
+    PROJECTION_MATRIX.values[0][2] = -(right + left) / 2; /* Centre on the x axis. */
+    PROJECTION_MATRIX.values[1][2] = -(top + bottom) / 2; /* Centre on the y axis. */
+
+    /* Transform the viewport to NDC by scaling the viewport to be from -1 to 1 in both axis. */
+    PROJECTION_MATRIX.values[0][0] = 2 / (right - left); /* Centre on the x axis. */
+    PROJECTION_MATRIX.values[1][1] = 2 / (top - bottom); /* Centre on the y axis. */
 }
 
 void gl2d_bind_vertex_array(float *vertex_array, size_t array_length)
@@ -36,18 +64,29 @@ void gl2d_bind_vertex_array(float *vertex_array, size_t array_length)
     }
 }
 
-void gl2d_set_mvmatrix(mat3_t mv_matrix)
+void gl2d_bind_mvmatrix(mat3_t *mv_matrix)
 {
     MV_MATRIX = mv_matrix;
 }
 
 void gl2d_draw(size_t num_verticies)
 {
-    gl2d_vertex_shader(num_verticies);
-    // gl2d_projection(num_verticies);
-    // gl2d_normalise_coords();
-    // gl2d_clipper();
-    // gl2d_window_coords();
+    vec3_t vertex;
+    vertex.values[2] = 1;
+
+    for (int i = 0; i < num_verticies * 2; i += 2) {
+        vertex.values[0] = VERTEX_ARRAY[i];
+        vertex.values[1] = VERTEX_ARRAY[i + 1];
+
+        vertex = ml_multiply_mat3_vec3(MV_MATRIX, &vertex);
+        vertex = ml_multiply_mat3_vec3(&PROJECTION_MATRIX, &vertex);
+        // gl2d_clipper();
+        vertex = ml_multiply_mat3_vec3(&VIEWPORT_MATRIX, &vertex);
+
+        VERTEX_ARRAY[i] = vertex.values[0];
+        VERTEX_ARRAY[i + 1] = vertex.values[1];
+    }
+
     gl2d_draw_lines(num_verticies);
     // gl2d_fill_faces();
 
@@ -58,22 +97,6 @@ void gl2d_clear_buffer()
 {
     for (int i = 0; i < gl2d.length; i++) {
         gl2d.frame_buffer[i] = 0x00;
-    }
-}
-
-static void gl2d_vertex_shader(size_t num_verticies)
-{
-    vec3_t vertex;
-
-    for (int i = 0; i < num_verticies * 2; i += 2) {
-        vertex.values[0] = VERTEX_ARRAY[i];
-        vertex.values[1] = VERTEX_ARRAY[i + 1];
-        vertex.values[2] = 1;
-
-        vertex = ml_multiply_mat3_vec3(&MV_MATRIX, &vertex);
-
-        VERTEX_ARRAY[i]     = vertex.values[0];
-        VERTEX_ARRAY[i + 1] = vertex.values[2];
     }
 }
 
