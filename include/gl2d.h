@@ -22,15 +22,15 @@ struct GL2D_t {
     size_t height;
     size_t length;
     unsigned char *frame_buffer;
-    void (*render)(unsigned char *, unsigned short);
+    void (*render)(unsigned char *, size_t);
 };
 
 void gl2d_init( size_t width, size_t height,
-                void (*render)(unsigned char *, unsigned short));
+                void (*render)(unsigned char *, size_t));
 
-void gl2d_viewport(unsigned short width, unsigned short height);
+void gl2d_viewport(size_t width, size_t height);
 
-void gl2d_orthographic(unsigned short left, unsigned short right, unsigned short bottom, unsigned short top);
+void gl2d_orthographic(size_t left, size_t right, size_t bottom, size_t top);
 
 void gl2d_bind_vertex_array(float *vertex_array, size_t array_length);
 
