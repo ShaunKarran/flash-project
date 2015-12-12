@@ -6,20 +6,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-// typedef struct Mat3_t {
-//     float xx; float xy; float xz;
-//     float yx; float yy; float yz;
-//     float zx; float zy; float zz;
-// } mat3_t;
 typedef struct Mat3_t {
     float values[3][3];
 } mat3_t;
 
-// typedef struct Vec3_t {
-//     float x;
-//     float y;
-//     float z;
-// } vec3_t;
 typedef struct Vec3_t {
     float values[3];
 } vec3_t;
