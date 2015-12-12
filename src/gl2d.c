@@ -174,10 +174,13 @@ static void gl2d_draw_line(float x1f, float y1f, float x2f, float y2f)
 
 static void gl2d_draw_pixel(int x, int y)
 {
-    int buffer_position = y / 8 * gl2d.width + x;
-
-    if (buffer_position > -1 && buffer_position < gl2d.length) {
-        unsigned char bit = y % 8;
-        set_bit(gl2d.frame_buffer[buffer_position], bit);
+    /* Position is outside of the buffer. */
+    if (x < 0 || x >= gl2d.width || y < 0 || y >= gl2d.height) {
+        return;
     }
+
+    size_t buffer_position = y / 8 * gl2d.width + x;
+    char bit = y % 8;
+
+    set_bit(gl2d.frame_buffer[buffer_position], bit);
 }
