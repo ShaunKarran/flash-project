@@ -79,9 +79,8 @@ void gl2d_draw(size_t num_verticies)
         vertex.values[1] = VERTEX_ARRAY[i + 1];
 
         vertex = ml_multiply_mat3_vec3(MV_MATRIX, &vertex);
-        vertex = ml_multiply_mat3_vec3(&PROJECTION_MATRIX, &vertex);
-        // gl2d_clipper();
-        vertex = ml_multiply_mat3_vec3(&VIEWPORT_MATRIX, &vertex);
+        // vertex = ml_multiply_mat3_vec3(&PROJECTION_MATRIX, &vertex);
+        // vertex = ml_multiply_mat3_vec3(&VIEWPORT_MATRIX, &vertex);
 
         VERTEX_ARRAY[i] = vertex.values[0];
         VERTEX_ARRAY[i + 1] = vertex.values[1];

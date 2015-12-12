@@ -7,6 +7,11 @@
 #include "lcd5110.h"
 #include "ml.h"
 
+/* LED pins for debugging. */
+#define LED0        PIN0_bm
+#define LED1        PIN1_bm
+#define LED_PORT    PORTR
+
 /* LCD pin definitions. */
 #define LCD_DC  PIN2_bm
 #define LCD_RST PIN3_bm
@@ -19,6 +24,9 @@ int main(void) {
     mat3_t mv_matrix;
 
     cpu_set_speed(CPU_32MHz);
+
+    LED_PORT.DIRSET = LED0 | LED1;
+
     lcd5110_init(LCD5110_CONTRAST_MID, &PORTC, LCD_DC, LCD_RST, LCD_SCE);
     gl2d_init(LCD5110_WIDTH, LCD5110_HEIGHT, lcd5110_write_array);
     gl2d_orthographic(0, LCD5110_WIDTH, 0, LCD5110_HEIGHT);
@@ -49,6 +57,7 @@ int main(void) {
 
         gl2d_draw(NUM_VERTICES);
 
+        LED_PORT.OUTTGL = LED0 | LED1;
         _delay_ms(100);
     }
 
