@@ -29,19 +29,20 @@ int main(void) {
 
     lcd5110_init(LCD5110_CONTRAST_MID, &PORTC, LCD_DC, LCD_RST, LCD_SCE);
     gl2d_init(LCD5110_WIDTH, LCD5110_HEIGHT, lcd5110_write_array);
-    gl2d_orthographic(0, LCD5110_WIDTH - 1, 0, LCD5110_HEIGHT - 1);
+    // gl2d_orthographic(0, LCD5110_WIDTH - 1, 0, LCD5110_HEIGHT - 1);
+    gl2d_orthographic(0, LCD5110_WIDTH - 1, LCD5110_HEIGHT - 1, 0);
 
     /* Defines the verticies to draw. */
-    vertex_array[0].values[0] = 10;
-    vertex_array[0].values[1] = 10;
+    vertex_array[0].values[0] =  0;
+    vertex_array[0].values[1] =  0;
     vertex_array[1].values[0] = 70;
-    vertex_array[1].values[1] = 10;
+    vertex_array[1].values[1] =  0;
     vertex_array[2].values[0] = 70;
     vertex_array[2].values[1] = 40;
-    vertex_array[3].values[0] = 10;
+    vertex_array[3].values[0] =  0;
     vertex_array[3].values[1] = 40;
-    vertex_array[4].values[0] = 10;
-    vertex_array[4].values[1] = 10;
+    vertex_array[4].values[0] =  0;
+    vertex_array[4].values[1] =  0;
 
     char i = 0;
     while (1) {
@@ -49,7 +50,7 @@ int main(void) {
 
         ml_mat3_identity(&mv_matrix);
         mv_matrix.values[0][2] = 0; // Move i in x direction.
-        mv_matrix.values[1][2] = 0; // Move i in y direction.
+        mv_matrix.values[1][2] = i; // Move i in y direction.
         i++;
 
         gl2d_bind_vertex_array(vertex_array, NUM_VERTICES * 2);
