@@ -20,37 +20,48 @@
 #define NUM_VERTICES 5
 
 int main(void) {
-    float vertex_array[NUM_VERTICES * 2];
+    vec2_t vertex_array[NUM_VERTICES];
     mat3_t mv_matrix;
-
-    cpu_set_speed(CPU_32MHz);
 
     LED_PORT.DIRSET = LED0;
 
+    cpu_set_speed(CPU_32MHz);
+
     lcd5110_init(LCD5110_CONTRAST_MID, &PORTC, LCD_DC, LCD_RST, LCD_SCE);
     gl2d_init(LCD5110_WIDTH, LCD5110_HEIGHT, lcd5110_write_array);
-    gl2d_orthographic(0, LCD5110_WIDTH, 0, LCD5110_HEIGHT);
+    gl2d_orthographic(0, LCD5110_WIDTH - 1, 0, LCD5110_HEIGHT - 1);
 
-    /* Each pair of values defines a vertex in the square. */
-    vertex_array[0] = 37;
-    vertex_array[1] = 19;
-    vertex_array[2] = 47;
-    vertex_array[3] = 19;
-    vertex_array[4] = 47;
-    vertex_array[5] = 29;
-    vertex_array[6] = 37;
-    vertex_array[7] = 29;
-    vertex_array[8] = 37;
-    vertex_array[9] = 19;
+    /* Defines the verticies to draw. */
+    vertex_array[0].values[0] =  0;
+    vertex_array[0].values[1] =  0;
+    vertex_array[1].values[0] = 83;
+    vertex_array[1].values[1] =  0;
+    vertex_array[2].values[0] = 83;
+    vertex_array[2].values[1] = 47;
+    vertex_array[3].values[0] =  0;
+    vertex_array[3].values[1] = 47;
+    vertex_array[4].values[0] =  0;
+    vertex_array[4].values[1] =  0;
+    /* Defines the verticies to draw. */
+    // vertex_array[0].values[0] = -1;
+    // vertex_array[0].values[1] = -1;
+    // vertex_array[1].values[0] =  1;
+    // vertex_array[1].values[1] = -1;
+    // vertex_array[2].values[0] =  1;
+    // vertex_array[2].values[1] =  1;
+    // vertex_array[3].values[0] = -1;
+    // vertex_array[3].values[1] =  1;
+    // vertex_array[4].values[0] = -1;
+    // vertex_array[4].values[1] = -1;
 
     char i = 0;
     while (1) {
         gl2d_clear_buffer();
 
         ml_mat3_identity(&mv_matrix);
-        // mv_matrix.values[0][2] = i; // Move i in x direction.
-        // mv_matrix.values[1][2] = i; // Move i in y direction.
-        // i++;
+        mv_matrix.values[0][2] = 0; // Move i in x direction.
+        mv_matrix.values[1][2] = 0; // Move i in y direction.
+        i++;
 
         gl2d_bind_vertex_array(vertex_array, NUM_VERTICES * 2);
         gl2d_bind_mvmatrix(&mv_matrix);

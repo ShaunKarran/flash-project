@@ -13,13 +13,12 @@
 
 static struct GL2D_t gl2d;
 
-static float  *VERTEX_ARRAY;
+static vec2_t *VERTEX_ARRAY;
 static mat3_t *MV_MATRIX;
 static mat3_t PROJECTION_MATRIX;
 static mat3_t VIEWPORT_MATRIX;
 
-void gl2d_init( size_t width, size_t height,
-                void (*render)(unsigned char *, size_t))
+void gl2d_init( size_t width, size_t height, void (*render)(unsigned char *, size_t))
 {
     gl2d.width  = width;
     gl2d.height = height;
@@ -30,34 +29,34 @@ void gl2d_init( size_t width, size_t height,
 
     ml_mat3_identity(&PROJECTION_MATRIX);
     ml_mat3_identity(&VIEWPORT_MATRIX);
-    gl2d_viewport(width, height);
+    gl2d_viewport(0, 0, width, height);
 }
 
-void gl2d_viewport(size_t width, size_t height)
+void gl2d_viewport(int x, int y, int width, int height)
 {
-    /* Scale from NDC to viewport size, and translate to viewport location.
-     * Note: Viewport 0, 0 is ALWAYS screen 0, 0. So use width & height instead of top, bottom... etc.
-     */
-    VIEWPORT_MATRIX.values[0][2] = width / 2; /* Centre on the x axis. */
-    VIEWPORT_MATRIX.values[1][2] = height / 2; /* Centre on the y axis. */
-    VIEWPORT_MATRIX.values[0][0] = width / 2; /* Centre on the x axis. */
-    VIEWPORT_MATRIX.values[1][1] = height / 2; /* Centre on the y axis. */
+    width  = width - 1;
+    height = height - 1;
+    /* Scale from NDC to viewport size, and translate to viewport location. */
+    VIEWPORT_MATRIX.values[0][2] = width  / 2.0f + x; /* Move to location of viewport. */
+    VIEWPORT_MATRIX.values[1][2] = height / 2.0f + y;
+    VIEWPORT_MATRIX.values[0][0] = width  / 2.0f; /* Scale to size of viewport. */
+    VIEWPORT_MATRIX.values[1][1] = height / 2.0f;
 }
 
-void gl2d_orthographic(size_t left, size_t right, size_t bottom, size_t top)
+void gl2d_orthographic(float left, float right, float bottom, float top)
 {
     /* Transform the viewport to clip coords by centring on 0, 0. */
-    PROJECTION_MATRIX.values[0][2] = -(right + left) / 2; /* Centre on the x axis. */
-    PROJECTION_MATRIX.values[1][2] = -(top + bottom) / 2; /* Centre on the y axis. */
+    PROJECTION_MATRIX.values[0][2] = -(right + left) / 2.0f; /* Centre on the x axis. */
+    PROJECTION_MATRIX.values[1][2] = -(top + bottom) / 2.0f; /* Centre on the y axis. */
 
     /* Transform the viewport to NDC by scaling the viewport to be from -1 to 1 in both axis. */
-    // PROJECTION_MATRIX.values[0][0] = 2 / (right - left); /* Centre on the x axis. */
-    // PROJECTION_MATRIX.values[1][1] = 2 / (top - bottom); /* Centre on the y axis. */
+    PROJECTION_MATRIX.values[0][0] = 2.0f / (right - left); /* Centre on the x axis. */
+    PROJECTION_MATRIX.values[1][1] = 2.0f / (top - bottom); /* Centre on the y axis. */
 }
 
-void gl2d_bind_vertex_array(float *vertex_array, size_t array_length)
+void gl2d_bind_vertex_array(vec2_t *vertex_array, size_t array_length)
 {
-    VERTEX_ARRAY = realloc(VERTEX_ARRAY, array_length);
+    VERTEX_ARRAY = realloc(VERTEX_ARRAY, array_length * sizeof(vec2_t));
 
     for (size_t i = 0; i < array_length; i++) {
         VERTEX_ARRAY[i] = vertex_array[i];
@@ -72,18 +71,18 @@ void gl2d_bind_mvmatrix(mat3_t *mv_matrix)
 void gl2d_draw(size_t num_verticies)
 {
     vec3_t vertex;
-    vertex.values[2] = 1;
 
-    for (size_t i = 0; i < num_verticies * 2; i += 2) {
-        vertex.values[0] = VERTEX_ARRAY[i];
-        vertex.values[1] = VERTEX_ARRAY[i + 1];
+    for (size_t i = 0; i < num_verticies; i++) {
+        vertex.values[0] = VERTEX_ARRAY[i].values[0];
+        vertex.values[1] = VERTEX_ARRAY[i].values[1];
+        vertex.values[2] = 1;
 
         vertex = ml_multiply_mat3_vec3(MV_MATRIX, &vertex);
-        vertex = ml_multiply_mat3_vec3(&PROJECTION_MATRIX, &vertex);
+        // vertex = ml_multiply_mat3_vec3(&PROJECTION_MATRIX, &vertex);
         // vertex = ml_multiply_mat3_vec3(&VIEWPORT_MATRIX, &vertex);
 
-        VERTEX_ARRAY[i] = vertex.values[0];
-        VERTEX_ARRAY[i + 1] = vertex.values[1];
+        VERTEX_ARRAY[i].values[0] = vertex.values[0];
+        VERTEX_ARRAY[i].values[1] = vertex.values[1];
     }
 
     gl2d_draw_lines(num_verticies);
@@ -130,18 +129,17 @@ static void gl2d_fill_faces()
 
 static void gl2d_draw_lines(size_t num_verticies)
 {
-    for (size_t i = 0; i < num_verticies * 2 - 2; i += 2) {
-        gl2d_draw_line( VERTEX_ARRAY[i], VERTEX_ARRAY[i + 1],
-                        VERTEX_ARRAY[i + 2], VERTEX_ARRAY[i + 3]);
+    for (size_t i = 0; i < num_verticies - 1; i++) {
+        gl2d_draw_line(VERTEX_ARRAY[i], VERTEX_ARRAY[i + 1]);
     }
 }
 
-static void gl2d_draw_line(float x1f, float y1f, float x2f, float y2f)
+static void gl2d_draw_line(vec2_t p1, vec2_t p2)
 {
-    int x1 = (int) roundf(x1f);
-    int y1 = (int) roundf(y1f);
-    int x2 = (int) roundf(x2f);
-    int y2 = (int) roundf(y2f);
+    int x1 = (int) roundf(p1.values[0]);
+    int y1 = (int) roundf(p1.values[1]);
+    int x2 = (int) roundf(p2.values[0]);
+    int y2 = (int) roundf(p2.values[1]);
 
     int dx = abs(x2 - x1);
 	int dy = abs(y2 - y1);
