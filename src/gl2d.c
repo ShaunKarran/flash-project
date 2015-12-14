@@ -36,6 +36,7 @@ void gl2d_viewport(int x, int y, int width, int height)
 {
     width  = width - 1;
     height = height - 1;
+
     /* Scale from NDC to viewport size, and translate to viewport location. */
     VIEWPORT_MATRIX.values[0][2] = width  / 2.0f + x; /* Move to location of viewport. */
     VIEWPORT_MATRIX.values[1][2] = height / 2.0f + y;
@@ -45,13 +46,14 @@ void gl2d_viewport(int x, int y, int width, int height)
 
 void gl2d_orthographic(float left, float right, float bottom, float top)
 {
-    /* Transform the viewport to clip coords by centring on 0, 0. */
-    PROJECTION_MATRIX.values[0][2] = -(right + left) / 2.0f; /* Centre on the x axis. */
-    PROJECTION_MATRIX.values[1][2] = -(top + bottom) / 2.0f; /* Centre on the y axis. */
-
     /* Transform the viewport to NDC by scaling the viewport to be from -1 to 1 in both axis. */
     PROJECTION_MATRIX.values[0][0] = 2.0f / (right - left); /* Centre on the x axis. */
     PROJECTION_MATRIX.values[1][1] = 2.0f / (top - bottom); /* Centre on the y axis. */
+
+    /* Transform the viewport to clip coords by centring on 0, 0. */
+    PROJECTION_MATRIX.values[0][2] = -((float)right + left) / (right - left); /* Centre on the x axis. */
+    PROJECTION_MATRIX.values[1][2] = -((float)top + bottom) / (top - bottom); /* Centre on the y axis. */
+
 }
 
 void gl2d_bind_vertex_array(vec2_t *vertex_array, size_t array_length)
@@ -78,8 +80,8 @@ void gl2d_draw(size_t num_verticies)
         vertex.values[2] = 1;
 
         vertex = ml_multiply_mat3_vec3(MV_MATRIX, &vertex);
-        // vertex = ml_multiply_mat3_vec3(&PROJECTION_MATRIX, &vertex);
-        // vertex = ml_multiply_mat3_vec3(&VIEWPORT_MATRIX, &vertex);
+        vertex = ml_multiply_mat3_vec3(&PROJECTION_MATRIX, &vertex);
+        vertex = ml_multiply_mat3_vec3(&VIEWPORT_MATRIX, &vertex);
 
         VERTEX_ARRAY[i].values[0] = vertex.values[0];
         VERTEX_ARRAY[i].values[1] = vertex.values[1];

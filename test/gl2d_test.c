@@ -32,27 +32,16 @@ int main(void) {
     gl2d_orthographic(0, LCD5110_WIDTH - 1, 0, LCD5110_HEIGHT - 1);
 
     /* Defines the verticies to draw. */
-    vertex_array[0].values[0] =  0;
-    vertex_array[0].values[1] =  0;
-    vertex_array[1].values[0] = 83;
-    vertex_array[1].values[1] =  0;
-    vertex_array[2].values[0] = 83;
-    vertex_array[2].values[1] = 47;
-    vertex_array[3].values[0] =  0;
-    vertex_array[3].values[1] = 47;
-    vertex_array[4].values[0] =  0;
-    vertex_array[4].values[1] =  0;
-    /* Defines the verticies to draw. */
-    // vertex_array[0].values[0] = -1;
-    // vertex_array[0].values[1] = -1;
-    // vertex_array[1].values[0] =  1;
-    // vertex_array[1].values[1] = -1;
-    // vertex_array[2].values[0] =  1;
-    // vertex_array[2].values[1] =  1;
-    // vertex_array[3].values[0] = -1;
-    // vertex_array[3].values[1] =  1;
-    // vertex_array[4].values[0] = -1;
-    // vertex_array[4].values[1] = -1;
+    vertex_array[0].values[0] = 10;
+    vertex_array[0].values[1] = 10;
+    vertex_array[1].values[0] = 70;
+    vertex_array[1].values[1] = 10;
+    vertex_array[2].values[0] = 70;
+    vertex_array[2].values[1] = 40;
+    vertex_array[3].values[0] = 10;
+    vertex_array[3].values[1] = 40;
+    vertex_array[4].values[0] = 10;
+    vertex_array[4].values[1] = 10;
 
     char i = 0;
     while (1) {
