@@ -13,7 +13,7 @@ void lcd5110_init(  unsigned char contrast, PORT_t *port, unsigned char dc_pin,
     lcd.sce_pin = sce_pin;
 
     spi_init_master(&spi_master, &SPIC, &PORTC, SPI_MODE_0_gc,
-                    SPI_PRESCALER_DIV128_gc, false, false);
+                    SPI_PRESCALER_DIV16_gc, false, false);
 
     lcd.port->DIRSET = lcd.dc_pin | lcd.rst_pin | lcd.sce_pin;
 
@@ -51,7 +51,7 @@ void lcd5110_write_command(unsigned char cmd)
     lcd.port->OUTSET = lcd.sce_pin;
 }
 
-void lcd5110_write_array(unsigned char *array, unsigned short length)
+void lcd5110_write_array(unsigned char *array, size_t length)
 {
     lcd.port->OUTSET = lcd.dc_pin; /* Sending data. */
 

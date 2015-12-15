@@ -2,6 +2,7 @@
 #ifndef _LCD5110_H_
 #define _LCD5110_H_
 
+#include <stdlib.h>
 #include <util/delay.h>
 
 #include "spi.h"
@@ -40,7 +41,7 @@ void lcd5110_write_data(unsigned char data);
 
 void lcd5110_write_command(unsigned char cmd);
 
-void lcd5110_write_array(unsigned char *array, unsigned short length);
+void lcd5110_write_array(unsigned char *array, size_t length);
 
 void lcd5110_clear(void);
 
