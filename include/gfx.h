@@ -22,7 +22,7 @@ struct GFX_Buffer_t {
 	unsigned short height;
     unsigned int   length;
 	unsigned char  *buffer;
-	void (*render)(unsigned char *, unsigned short);
+	void (*render)(unsigned char *, size_t);
 };
 
 struct GFX_Sprite_t {
@@ -33,7 +33,7 @@ struct GFX_Sprite_t {
 
 // Function Prototypes --------------------------------------------------------
 bool gfx_init(struct GFX_Buffer_t *gfx, unsigned short width, unsigned short height,
-			  void (*render)(unsigned char *, unsigned short));
+			  void (*render)(unsigned char *, size_t));
 
 void gfx_bind_buffer(struct GFX_Buffer_t *gfx);
 

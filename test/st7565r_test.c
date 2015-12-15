@@ -10,20 +10,22 @@
 
 int main(void)
 {
-    // struct GFX_Buffer_t gfx;
+    struct GFX_Buffer_t gfx;
 
     cpu_set_speed(CPU_32MHz);
     st7565r_init();
 
-    // gfx_init(&gfx, LCD5110_WIDTH, LCD5110_HEIGHT, lcd5110_write_array);
+    gfx_init(&gfx, ST7565R_WIDTH, ST7565R_HEIGHT, st7565r_write_array);
 
-    // gfx_bind_buffer(&gfx);
+    gfx_bind_buffer(&gfx);
 
-    // gfx_draw_string("Xmega is best!", ASCII_FONT, 0, 0);
-    // gfx_render();
-
+    short i = 0;
     while (1) {
-        st7565r_write_data(0xFF);
+        if (i > 132) { i = 0; }
+        gfx_clear();
+        gfx_draw_circle(i++, 16, 10);
+        gfx_render();
+        _delay_ms(100);
     }
 
     return 0;

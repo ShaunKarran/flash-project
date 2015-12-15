@@ -10,7 +10,7 @@
 #include "usart_spi.h"
 
 /* Display pixel dimensions. */
-#define ST7565R_WIDTH  128
+#define ST7565R_WIDTH  132
 #define ST7565R_HEIGHT 32
 #define ST7565R_PIXELS ST7565R_WIDTH * ST7565R_HEIGHT
 #define ST7565R_BYTES  ST7565R_PIXELS / 8
@@ -18,9 +18,9 @@
 #define ST7565R_CMD_DISPLAY_ON                     0xAF
 #define ST7565R_CMD_DISPLAY_OFF                    0xAE
 #define ST7565R_CMD_START_LINE_SET(line)           (0x40 | (line))
-#define ST7565R_CMD_PAGE_ADDRESS_SET(page)         (0xB0 | (page))
-#define ST7565R_CMD_COLUMN_ADDRESS_SET_MSB(column) (0x10 | (column))
-#define ST7565R_CMD_COLUMN_ADDRESS_SET_LSB(column) (0x00 | (column))
+#define ST7565R_CMD_PAGE_SET(page)                 (0xB0 | (page))
+#define ST7565R_CMD_COLUMN_SET_MSB(column)         (0x10 | (column))
+#define ST7565R_CMD_COLUMN_SET_LSB(column)         (0x00 | (column))
 #define ST7565R_CMD_ADC_NORMAL                     0xA0
 #define ST7565R_CMD_ADC_REVERSE                    0xA1
 #define ST7565R_CMD_DISPLAY_NORMAL                 0xA6
@@ -82,5 +82,9 @@ void st7565r_clear(void);
 void st7565r_position(unsigned char x, unsigned char y);
 
 static void st7564r_config(void);
+
+static void st7565r_set_page(unsigned char page);
+
+static void st7565r_set_column(unsigned char column);
 
 #endif /* _ST7565R_H_ */

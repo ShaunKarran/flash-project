@@ -15,7 +15,7 @@ static struct GFX_Buffer_t *GFX;
 
 // Function Definitions -------------------------------------------------------
 bool gfx_init(struct GFX_Buffer_t *gfx, unsigned short width, unsigned short height,
-			  void (*render)(unsigned char *, unsigned short))
+			  void (*render)(unsigned char *, size_t))
 {
 	gfx->width = width;
 	gfx->height = height;
