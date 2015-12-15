@@ -5,12 +5,16 @@
 #include "gfx.h"
 #include "st7565r.h"
 
+#define LED0 PIN0_bm
+#define LED1 PIN1_bm
+
 int main(void)
 {
     // struct GFX_Buffer_t gfx;
 
     cpu_set_speed(CPU_32MHz);
     st7565r_init();
+
     // gfx_init(&gfx, LCD5110_WIDTH, LCD5110_HEIGHT, lcd5110_write_array);
 
     // gfx_bind_buffer(&gfx);

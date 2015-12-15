@@ -3,6 +3,7 @@
 #define _ST7565R_H_
 
 #include <avr/io.h>
+#include <stdlib.h>
 #include <util/delay.h>
 
 #include "bitwise.h"
@@ -54,10 +55,14 @@
 #define ST7565R_CMD_READ_MODIFY_WRITE              0xE0
 
 struct ST7565R_t {
+    PORT_t        *data_port;
+    PORT_t        *clk_port;
     PORT_t        *a0_port;
     PORT_t        *cs_port;
     PORT_t        *rst_port;
     PORT_t        *bl_port;
+    unsigned char data_pin;
+    unsigned char clk_pin;
     unsigned char a0_pin;
     unsigned char cs_pin;
     unsigned char rst_pin;
@@ -70,7 +75,7 @@ void st7565r_write_data(unsigned char data);
 
 void st7565r_write_command(unsigned char cmd);
 
-void st7565r_write_array(unsigned char *array, unsigned short length);
+void st7565r_write_array(unsigned char *array, size_t length);
 
 void st7565r_clear(void);
 
