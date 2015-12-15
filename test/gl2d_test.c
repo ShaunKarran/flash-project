@@ -4,8 +4,9 @@
 
 #include "cpu.h"
 #include "gl2d.h"
-#include "lcd5110.h"
+// #include "lcd5110.h"
 #include "ml.h"
+#include "st7565r.h"
 
 /* LED pins for debugging. */
 #define LED0        PIN0_bm
@@ -27,10 +28,13 @@ int main(void) {
 
     cpu_set_speed(CPU_32MHz);
 
-    lcd5110_init(LCD5110_CONTRAST_MID, &PORTC, LCD_DC, LCD_RST, LCD_SCE);
-    gl2d_init(LCD5110_WIDTH, LCD5110_HEIGHT, lcd5110_write_array);
-    // gl2d_orthographic(0, LCD5110_WIDTH - 1, 0, LCD5110_HEIGHT - 1);
-    gl2d_orthographic(0, LCD5110_WIDTH - 1, LCD5110_HEIGHT - 1, 0);
+    // lcd5110_init(LCD5110_CONTRAST_MID, &PORTC, LCD_DC, LCD_RST, LCD_SCE);
+    // gl2d_init(LCD5110_WIDTH, LCD5110_HEIGHT, lcd5110_write_array);
+    st7565r_init();
+    gl2d_init(ST7565R_WIDTH, ST7565R_HEIGHT, st7565r_write_array);
+
+    // gl2d_orthographic(0, LCD5110_WIDTH - 1, LCD5110_HEIGHT - 1, 0);
+    gl2d_orthographic(0, ST7565R_WIDTH - 1, ST7565R_HEIGHT - 1, 0);
 
     /* Defines the verticies to draw. */
     vertex_array[0].values[0] =  0;
