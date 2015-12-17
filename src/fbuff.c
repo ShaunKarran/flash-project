@@ -57,3 +57,32 @@ void fbuff_clr_pixel(int x, int y, struct FBUFF_Buffer_t *frame_buffer)
 
     clr_bit(frame_buffer->buffer[byte], bit);
 }
+
+void fbuff_fill_faces(struct FBUFF_Buffer_t *frame_buffer)
+{
+    size_t buffer_position;
+    bool previous_pixel = false;
+    bool this_pixel     = false;
+    bool inside         = false;
+
+    for (size_t y = 0; y < frame_buffer->height; y++) {
+        inside = false;
+
+        for (size_t x = 0; x < frame_buffer->width; x++) {
+            buffer_position = y / 8 * frame_buffer->width + x;
+
+            previous_pixel = this_pixel;
+            this_pixel = get_bit(frame_buffer->buffer[buffer_position], y % 8);
+
+            if (previous_pixel && !this_pixel) {
+                inside = !inside;
+            } else if (previous_pixel && this_pixel) { /* Horizontal edge. */
+                inside = true;
+            }
+
+            if (inside) {
+                set_bit(frame_buffer->buffer[buffer_position], y % 8);
+            }
+        }
+    }
+}

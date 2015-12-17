@@ -10,6 +10,7 @@
 #ifndef _FBUFF_H_
 #define _FBUFF_H_
 
+#include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -31,5 +32,7 @@ void fbuff_fill(struct FBUFF_Buffer_t *frame_buffer);
 void fbuff_set_pixel(int x, int y, struct FBUFF_Buffer_t *frame_buffer);
 
 void fbuff_clr_pixel(int x, int y, struct FBUFF_Buffer_t *frame_buffer);
+
+void fbuff_fill_faces(struct FBUFF_Buffer_t *frame_buffer);
 
 #endif /* _FBUFF_H_ */
