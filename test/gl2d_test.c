@@ -28,12 +28,8 @@ int main(void) {
 
     cpu_set_speed(CPU_32MHz);
 
-    // lcd5110_init(LCD5110_CONTRAST_MID, &PORTC, LCD_DC, LCD_RST, LCD_SCE);
-    // gl2d_init(LCD5110_WIDTH, LCD5110_HEIGHT, lcd5110_write_array);
     st7565r_init();
     gl2d_init(ST7565R_WIDTH, ST7565R_HEIGHT, st7565r_write_array);
-
-    // gl2d_orthographic(0, LCD5110_WIDTH - 1, LCD5110_HEIGHT - 1, 0);
     gl2d_orthographic(0, ST7565R_WIDTH - 1, ST7565R_HEIGHT - 1, 0);
 
     /* Defines the verticies to draw. */
@@ -50,8 +46,6 @@ int main(void) {
 
     char i = 0;
     while (1) {
-        gl2d_clear_buffer();
-
         ml_mat3_identity(&mv_matrix);
         mv_matrix.values[0][2] = 0; // Move i in x direction.
         mv_matrix.values[1][2] = i; // Move i in y direction.
@@ -63,7 +57,7 @@ int main(void) {
         gl2d_draw(NUM_VERTICES);
 
         LED_PORT.OUTTGL = LED0;
-        _delay_ms(100);
+        _delay_ms(30); /* ~30fps */
     }
 
     return 0;

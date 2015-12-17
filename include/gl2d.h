@@ -15,17 +15,10 @@
 #include <stdlib.h>
 
 #include "bitwise.h"
+#include "fbuff.h"
 #include "ml.h"
 
-struct GL2D_t {
-    size_t width;
-    size_t height;
-    size_t length;
-    unsigned char *frame_buffer;
-    void (*render)(unsigned char *, size_t);
-};
-
-void gl2d_init( size_t width, size_t height, void (*render)(unsigned char *, size_t));
+void gl2d_init(size_t width, size_t height, void (*render_function)(unsigned char *, size_t));
 
 void gl2d_viewport(int x, int y, int width, int height);
 
@@ -37,14 +30,8 @@ void gl2d_bind_mvmatrix(mat3_t *mv_matrix);
 
 void gl2d_draw(size_t num_verticies);
 
-void gl2d_clear_buffer();
-
-static void gl2d_fill_faces();
-
 static void gl2d_draw_lines(size_t num_verticies);
 
 static void gl2d_draw_line(vec2_t p1, vec2_t p2);
-
-static void gl2d_draw_pixel(int x, int y);
 
 #endif /* _GL2D_H_ */
