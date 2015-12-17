@@ -85,7 +85,6 @@ void gl2d_draw(size_t num_verticies)
     }
 
     gl2d_draw_lines(num_verticies);
-    // fbuff_fill_faces(&frame_buffer);
 
     render(frame_buffer.buffer, frame_buffer.size);
     fbuff_clear(&frame_buffer);
