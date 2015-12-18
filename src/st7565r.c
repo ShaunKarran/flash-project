@@ -1,46 +1,37 @@
 
 #include "st7565r.h"
 
-static struct USART_SPI_t usart;
-static struct ST7565R_t   lcd;
+static struct ST7565R_t *LCD;
 
-void st7565r_init(void)
+void st7565r_init(  struct ST7565R_t *lcd, USART_t *usart, struct GPIO_Pin_t *data, struct GPIO_Pin_t *clk,
+                    struct GPIO_Pin_t *chip_select, struct GPIO_Pin_t *a0, struct GPIO_Pin_t *reset,
+                    struct GPIO_Pin_t *back_light)
 {
-    // lcd.data_port  = &PORTD;
-    // lcd.clk_port   = &PORTD;
-    lcd.a0_port    = &PORTD;
-    lcd.cs_port    = &PORTF;
-    lcd.rst_port   = &PORTA;
-    lcd.bl_port    = &PORTE;
+    LCD = lcd;
 
-    // lcd.data_pin   = PIN3_bm;
-    // lcd.clk_pin    = PIN1_bm;
-    lcd.a0_pin     = PIN0_bm;
-    lcd.cs_pin     = PIN3_bm;
-    lcd.rst_pin    = PIN3_bm;
-    lcd.bl_pin     = PIN4_bm;
+    LCD->usart       = usart;
+    LCD->data        = data;
+    LCD->clk         = clk;
+    LCD->chip_select = chip_select;
+    LCD->a0          = a0;
+    LCD->reset       = reset;
+    LCD->back_light  = back_light;
 
-    usart_spi_init(&usart, &USARTD0, &PORTD);
+    gpio_set_output(LCD->data);
+    gpio_set_output(LCD->clk);
+    gpio_set_output(LCD->chip_select);
+    gpio_set_output(LCD->a0);
+    gpio_set_output(LCD->reset);
+    gpio_set_output(LCD->back_light);
 
-    // lcd.data_port->DIRSET   = lcd.data_pin;
-    // lcd.clk_port->DIRSET   = lcd.clk_pin;
-    lcd.a0_port->DIRSET   = lcd.a0_pin;
-    lcd.cs_port->DIRSET   = lcd.cs_pin;
-    lcd.rst_port->DIRSET  = lcd.rst_pin;
-    lcd.bl_port->DIRSET   = lcd.bl_pin;
+    gpio_set_pin(LCD->chip_select);
+    gpio_set_pin(LCD->reset);
 
-    // lcd.data_port->OUTSET = lcd.data_pin;
-    // lcd.clk_port->OUTSET = lcd.clk_pin;
-    lcd.cs_port->OUTSET  = lcd.cs_pin;
-    lcd.a0_port->OUTCLR  = lcd.a0_pin;
-    lcd.rst_port->OUTCLR = lcd.rst_pin;
-    _delay_us(5);
-    lcd.rst_port->OUTSET = lcd.rst_pin;
-    _delay_us(5);
+    usart_spi_init(usart);
 
-    lcd.bl_port->OUTSET = lcd.bl_pin;
+    st7564r_hard_reset();
 
-    lcd.cs_port->OUTCLR = lcd.cs_pin;
+    gpio_clr_pin(LCD->chip_select);
     st7565r_write_command(ST7565R_CMD_ADC_NORMAL);
     st7565r_write_command(ST7565R_CMD_DISPLAY_NORMAL);
     st7565r_write_command(ST7565R_CMD_REVERSE_SCAN_DIRECTION);
@@ -50,55 +41,37 @@ void st7565r_init(void)
     st7565r_write_command(ST7565R_CMD_BOOSTER_RATIO_2X_3X_4X);
     st7565r_write_command(ST7565R_CMD_VOLTAGE_RESISTOR_RATIO_1);
     st7565r_write_command(ST7565R_CMD_DISPLAY_ON);
-    lcd.cs_port->OUTSET = lcd.cs_pin;
+    gpio_set_pin(LCD->chip_select);
+
+    st7564r_back_light(true);
+}
+
+void st7565r_bind(struct ST7565R_t *lcd)
+{
+    LCD = lcd;
 }
 
 void st7565r_write_data(unsigned char data)
 {
-    lcd.a0_port->OUTSET = lcd.a0_pin;
+    gpio_set_pin(LCD->a0);
 
-    // for (int i = 7; i >= 0; i--) {
-    //     lcd.clk_port->OUTCLR = lcd.clk_pin;
-    //     if (get_bit(data, i)) {
-    //         lcd.data_port->OUTSET = lcd.data_pin;
-    //     } else {
-    //         lcd.data_port->OUTCLR = lcd.data_pin;
-    //     }
-    //     lcd.clk_port->OUTSET = lcd.clk_pin;
-    // }
-    usart_spi_write(&usart, data);
+    usart_spi_write(LCD->usart, data);
 }
 
 void st7565r_write_command(unsigned char cmd)
 {
-    lcd.a0_port->OUTCLR = lcd.a0_pin;
+    gpio_clr_pin(LCD->a0);
 
-    // for (int i = 7; i >= 0; i--) {
-    //     lcd.clk_port->OUTCLR = lcd.clk_pin;
-    //     if (get_bit(cmd, i)) {
-    //         lcd.data_port->OUTSET = lcd.data_pin;
-    //     } else {
-    //         lcd.data_port->OUTCLR = lcd.data_pin;
-    //     }
-    //     lcd.clk_port->OUTSET = lcd.clk_pin;
-    // }
-    usart_spi_write(&usart, cmd);
+    usart_spi_write(LCD->usart, cmd);
 }
 
 void st7565r_write_array(unsigned char *array, size_t length)
 {
     unsigned char page = 0;
 
-    lcd.cs_port->OUTCLR = lcd.cs_pin;
-    for (size_t i = 0; i < length; i++) {
-        if (i % ST7565R_WIDTH == 0) {
-            st7565r_set_page(page++);
-            st7565r_set_column(0);
-        }
-
-        st7565r_write_data(array[i]);
+    for (page = 0; page < ST7565R_HEIGHT / 8; page++) {
+        st7565r_write_page(page, array + page * ST7565R_WIDTH);
     }
-    lcd.cs_port->OUTSET = lcd.cs_pin;
 }
 
 void st7565r_clear(void)
@@ -109,17 +82,45 @@ void st7565r_position(unsigned char x, unsigned char y)
 {
 }
 
-static void st7565r_set_page(unsigned char page)
+void st7564r_back_light(bool on)
+{
+    if (on) {
+        gpio_set_pin(LCD->back_light);
+    } else {
+        gpio_clr_pin(LCD->back_light);
+    }
+}
+
+void st7564r_hard_reset(void)
+{
+    gpio_clr_pin(LCD->a0);
+    gpio_clr_pin(LCD->reset);
+    _delay_us(5);
+    gpio_set_pin(LCD->reset);
+    _delay_us(5);
+}
+
+void st7565r_set_page(unsigned char page)
 {
     /* Make sure that the address is 4 bits (only 8 pages). */
     page &= 0x0F;
     st7565r_write_command(ST7565R_CMD_PAGE_SET(page));
 }
 
-static void st7565r_set_column(unsigned char column)
+void st7565r_set_column(unsigned char column)
 {
     /* Make sure the address is 7 bits. */
 	column &= 0x7F;
 	st7565r_write_command(ST7565R_CMD_COLUMN_SET_MSB(column >> 4));
 	st7565r_write_command(ST7565R_CMD_COLUMN_SET_LSB(column & 0x0F));
+}
+
+void st7565r_write_page(unsigned char page, unsigned char *data)
+{
+    st7565r_set_page(page);
+    st7565r_set_column(0);
+
+    for (size_t i = 0; i < ST7565R_WIDTH; i++) {
+        st7565r_write_data(data[i]);
+    }
 }
