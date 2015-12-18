@@ -31,7 +31,6 @@ void st7565r_init(  struct ST7565R_t *lcd, USART_t *usart, struct GPIO_Pin_t *da
 
     st7564r_hard_reset();
 
-    gpio_clr_pin(LCD->chip_select);
     st7565r_write_command(ST7565R_CMD_ADC_NORMAL);
     st7565r_write_command(ST7565R_CMD_DISPLAY_NORMAL);
     st7565r_write_command(ST7565R_CMD_REVERSE_SCAN_DIRECTION);
@@ -41,7 +40,6 @@ void st7565r_init(  struct ST7565R_t *lcd, USART_t *usart, struct GPIO_Pin_t *da
     st7565r_write_command(ST7565R_CMD_BOOSTER_RATIO_2X_3X_4X);
     st7565r_write_command(ST7565R_CMD_VOLTAGE_RESISTOR_RATIO_1);
     st7565r_write_command(ST7565R_CMD_DISPLAY_ON);
-    gpio_set_pin(LCD->chip_select);
 
     st7564r_back_light(true);
 }
@@ -55,25 +53,27 @@ void st7565r_write_data(unsigned char data)
 {
     gpio_set_pin(LCD->a0);
 
+    gpio_clr_pin(LCD->chip_select);
     usart_spi_write(LCD->usart, data);
+    gpio_set_pin(LCD->chip_select);
 }
 
 void st7565r_write_command(unsigned char cmd)
 {
     gpio_clr_pin(LCD->a0);
 
+    gpio_clr_pin(LCD->chip_select);
     usart_spi_write(LCD->usart, cmd);
+    gpio_set_pin(LCD->chip_select);
 }
 
 void st7565r_write_array(unsigned char *array, size_t length)
 {
     unsigned char page = 0;
 
-    gpio_clr_pin(LCD->chip_select);
     for (page = 0; page < ST7565R_HEIGHT / 8; page++) {
         st7565r_write_page(page, array + page * ST7565R_WIDTH);
     }
-    gpio_set_pin(LCD->chip_select);
 }
 
 void st7565r_clear(void)
