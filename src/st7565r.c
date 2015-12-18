@@ -69,9 +69,11 @@ void st7565r_write_array(unsigned char *array, size_t length)
 {
     unsigned char page = 0;
 
+    gpio_clr_pin(LCD->chip_select);
     for (page = 0; page < ST7565R_HEIGHT / 8; page++) {
         st7565r_write_page(page, array + page * ST7565R_WIDTH);
     }
+    gpio_set_pin(LCD->chip_select);
 }
 
 void st7565r_clear(void)

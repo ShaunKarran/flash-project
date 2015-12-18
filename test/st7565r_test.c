@@ -43,7 +43,7 @@ int main(void)
         gfx_render();
 
         gpio_tgl_pin(&led0);
-        _delay_ms(100);
+        _delay_ms(30);
     }
 
     return 0;
