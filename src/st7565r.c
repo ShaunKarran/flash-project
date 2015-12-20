@@ -1,31 +1,17 @@
 
 #include "st7565r.h"
 
-static struct ST7565R_t *LCD;
+static struct ST7565R_t LCD;
 
-void st7565r_init(  struct ST7565R_t *lcd, USART_t *usart, struct GPIO_Pin_t *data, struct GPIO_Pin_t *clk,
-                    struct GPIO_Pin_t *chip_select, struct GPIO_Pin_t *a0, struct GPIO_Pin_t *reset,
-                    struct GPIO_Pin_t *back_light)
+void st7565r_init(USART_t *usart, gpio_pin_t chip_select, gpio_pin_t a0, gpio_pin_t reset)
 {
-    LCD = lcd;
+    LCD.usart       = usart;
+    LCD.chip_select = chip_select;
+    LCD.a0          = a0;
+    LCD.reset       = reset;
 
-    LCD->usart       = usart;
-    LCD->data        = data;
-    LCD->clk         = clk;
-    LCD->chip_select = chip_select;
-    LCD->a0          = a0;
-    LCD->reset       = reset;
-    LCD->back_light  = back_light;
-
-    gpio_set_output(LCD->data);
-    gpio_set_output(LCD->clk);
-    gpio_set_output(LCD->chip_select);
-    gpio_set_output(LCD->a0);
-    gpio_set_output(LCD->reset);
-    gpio_set_output(LCD->back_light);
-
-    gpio_set_pin(LCD->chip_select);
-    gpio_set_pin(LCD->reset);
+    gpio_set_pin(LCD.chip_select);
+    gpio_set_pin(LCD.reset);
 
     usart_spi_init(usart);
 
@@ -40,31 +26,24 @@ void st7565r_init(  struct ST7565R_t *lcd, USART_t *usart, struct GPIO_Pin_t *da
     st7565r_write_command(ST7565R_CMD_BOOSTER_RATIO_2X_3X_4X);
     st7565r_write_command(ST7565R_CMD_VOLTAGE_RESISTOR_RATIO_1);
     st7565r_write_command(ST7565R_CMD_DISPLAY_ON);
-
-    st7564r_back_light(true);
-}
-
-void st7565r_bind(struct ST7565R_t *lcd)
-{
-    LCD = lcd;
 }
 
 void st7565r_write_data(unsigned char data)
 {
-    gpio_set_pin(LCD->a0);
+    gpio_set_pin(LCD.a0);
 
-    gpio_clr_pin(LCD->chip_select);
-    usart_spi_write(LCD->usart, data);
-    gpio_set_pin(LCD->chip_select);
+    gpio_clr_pin(LCD.chip_select);
+    usart_spi_write(LCD.usart, data);
+    gpio_set_pin(LCD.chip_select);
 }
 
 void st7565r_write_command(unsigned char cmd)
 {
-    gpio_clr_pin(LCD->a0);
+    gpio_clr_pin(LCD.a0);
 
-    gpio_clr_pin(LCD->chip_select);
-    usart_spi_write(LCD->usart, cmd);
-    gpio_set_pin(LCD->chip_select);
+    gpio_clr_pin(LCD.chip_select);
+    usart_spi_write(LCD.usart, cmd);
+    gpio_set_pin(LCD.chip_select);
 }
 
 void st7565r_write_array(unsigned char *array, size_t length)
@@ -84,21 +63,12 @@ void st7565r_position(unsigned char x, unsigned char y)
 {
 }
 
-void st7564r_back_light(bool on)
-{
-    if (on) {
-        gpio_set_pin(LCD->back_light);
-    } else {
-        gpio_clr_pin(LCD->back_light);
-    }
-}
-
 void st7564r_hard_reset(void)
 {
-    gpio_clr_pin(LCD->a0);
-    gpio_clr_pin(LCD->reset);
+    gpio_clr_pin(LCD.a0);
+    gpio_clr_pin(LCD.reset);
     _delay_us(5);
-    gpio_set_pin(LCD->reset);
+    gpio_set_pin(LCD.reset);
     _delay_us(5);
 }
 

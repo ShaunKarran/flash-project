@@ -57,20 +57,13 @@
 #define ST7565R_CMD_READ_MODIFY_WRITE              0xE0
 
 struct ST7565R_t {
-    USART_t           *usart;
-    struct GPIO_Pin_t *data;
-    struct GPIO_Pin_t *clk;
-    struct GPIO_Pin_t *chip_select;
-    struct GPIO_Pin_t *a0;
-    struct GPIO_Pin_t *reset;
-    struct GPIO_Pin_t *back_light;
+    USART_t    *usart;
+    gpio_pin_t chip_select;
+    gpio_pin_t a0;
+    gpio_pin_t reset;
 };
 
-void st7565r_init(  struct ST7565R_t *lcd, USART_t *usart, struct GPIO_Pin_t *data, struct GPIO_Pin_t *clk,
-                    struct GPIO_Pin_t *chip_select, struct GPIO_Pin_t *a0, struct GPIO_Pin_t *reset,
-                    struct GPIO_Pin_t *back_light);
-
-void st7565r_bind(struct ST7565R_t *lcd);
+void st7565r_init(USART_t *usart, gpio_pin_t chip_select, gpio_pin_t a0, gpio_pin_t reset);
 
 void st7565r_write_data(unsigned char data);
 
@@ -81,8 +74,6 @@ void st7565r_write_array(unsigned char *array, size_t length);
 void st7565r_clear(void);
 
 void st7565r_position(unsigned char x, unsigned char y);
-
-void st7564r_back_light(bool on);
 
 void st7564r_hard_reset(void);
 
