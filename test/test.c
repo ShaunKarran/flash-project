@@ -24,11 +24,26 @@ int main(void) {
     vec2_t vertex_array[NUM_VERTICES];
     mat3_t mv_matrix;
 
-    LED_PORT.DIRSET = LED0;
-
     cpu_set_speed(CPU_32MHz);
 
-    st7565r_init();
+    gpio_pin_t lcd_data        = gpio_create_pin(&PORTD, PIN3_bm);
+    gpio_pin_t lcd_clock       = gpio_create_pin(&PORTD, PIN1_bm);
+    gpio_pin_t lcd_chip_select = gpio_create_pin(&PORTF, PIN3_bm);
+    gpio_pin_t lcd_a0          = gpio_create_pin(&PORTD, PIN0_bm);
+    gpio_pin_t lcd_reset       = gpio_create_pin(&PORTA, PIN3_bm);
+    gpio_pin_t lcd_backlight   = gpio_create_pin(&PORTE, PIN4_bm);
+    gpio_set_output(lcd_data);
+    gpio_set_output(lcd_clock);
+    gpio_set_output(lcd_chip_select);
+    gpio_set_output(lcd_a0);
+    gpio_set_output(lcd_reset);
+    gpio_set_output(lcd_backlight);
+    st7565r_init(&USARTD0, lcd_chip_select, lcd_a0, lcd_reset);
+    gpio_set_pin(lcd_backlight);
+
+    gpio_pin_t led0 = gpio_create_pin(&PORTR, PIN0_bm);
+    gpio_set_output(led0);
+
     gl2d_init(ST7565R_WIDTH, ST7565R_HEIGHT, st7565r_write_array);
     gl2d_orthographic(0, ST7565R_WIDTH - 1, ST7565R_HEIGHT - 1, 0);
 
@@ -56,7 +71,7 @@ int main(void) {
 
         gl2d_draw(NUM_VERTICES);
 
-        LED_PORT.OUTTGL = LED0;
+        gpio_tgl_pin(led0);
         _delay_ms(30); /* ~30fps */
     }
 

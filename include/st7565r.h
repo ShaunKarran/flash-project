@@ -3,10 +3,12 @@
 #define _ST7565R_H_
 
 #include <avr/io.h>
+#include <stdbool.h>
 #include <stdlib.h>
 #include <util/delay.h>
 
 #include "bitwise.h"
+#include "gpio.h"
 #include "usart_spi.h"
 
 /* Display pixel dimensions. */
@@ -55,21 +57,13 @@
 #define ST7565R_CMD_READ_MODIFY_WRITE              0xE0
 
 struct ST7565R_t {
-    PORT_t        *data_port;
-    PORT_t        *clk_port;
-    PORT_t        *a0_port;
-    PORT_t        *cs_port;
-    PORT_t        *rst_port;
-    PORT_t        *bl_port;
-    unsigned char data_pin;
-    unsigned char clk_pin;
-    unsigned char a0_pin;
-    unsigned char cs_pin;
-    unsigned char rst_pin;
-    unsigned char bl_pin;
+    USART_t    *usart;
+    gpio_pin_t chip_select;
+    gpio_pin_t a0;
+    gpio_pin_t reset;
 };
 
-void st7565r_init(void);
+void st7565r_init(USART_t *usart, gpio_pin_t chip_select, gpio_pin_t a0, gpio_pin_t reset);
 
 void st7565r_write_data(unsigned char data);
 
@@ -81,10 +75,12 @@ void st7565r_clear(void);
 
 void st7565r_position(unsigned char x, unsigned char y);
 
-static void st7564r_config(void);
+void st7564r_hard_reset(void);
 
-static void st7565r_set_page(unsigned char page);
+void st7565r_set_page(unsigned char page);
 
-static void st7565r_set_column(unsigned char column);
+void st7565r_set_column(unsigned char column);
+
+void st7565r_write_page(unsigned char page, unsigned char *data);
 
 #endif /* _ST7565R_H_ */
