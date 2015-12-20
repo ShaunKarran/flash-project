@@ -27,7 +27,7 @@
 
 # Target file name (without extension).
 # You will need to replace "name_of_file" with your file name without the .c extension
-TARGET = ./test/st7565r_test
+TARGET = ./test/test
 
 
 # List C source files here. (C dependencies are automatically generated.)

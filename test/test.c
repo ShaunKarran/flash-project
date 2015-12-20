@@ -8,6 +8,22 @@
 
 int main(void)
 {
+    pin_t lcd_data        = gpio_create_pin(&PORTD, PIN3_bm);
+    pin_t lcd_clock       = gpio_create_pin(&PORTD, PIN1_bm);
+    pin_t lcd_chip_select = gpio_create_pin(&PORTF, PIN3_bm);
+    pin_t lcd_a0          = gpio_create_pin(&PORTD, PIN0_bm);
+    pin_t lcd_reset       = gpio_create_pin(&PORTA, PIN3_bm);
+    pin_t lcd_backlight   = gpio_create_pin(&PORTE, PIN4_bm);
+    gpio_set_output(&lcd_data);
+    gpio_set_output(&lcd_clock);
+    gpio_set_output(&lcd_chip_select);
+    gpio_set_output(&lcd_a0);
+    gpio_set_output(&lcd_reset);
+    gpio_set_output(&lcd_backlight);
+
+    st7565r_init(&USARTD0, lcd_chip_select, lcd_a0, lcd_reset);
+    gpio_set_pin(&lcd_backlight);
+
     struct GPIO_Pin_t led0;
 
     struct ST7565R_t    lcd;
