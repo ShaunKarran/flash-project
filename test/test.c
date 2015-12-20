@@ -4,19 +4,9 @@
 
 #include "cpu.h"
 #include "gl2d.h"
-// #include "lcd5110.h"
+#include "gpio.h"
 #include "ml.h"
 #include "st7565r.h"
-
-/* LED pins for debugging. */
-#define LED0        PIN0_bm
-#define LED1        PIN1_bm
-#define LED_PORT    PORTR
-
-/* LCD pin definitions. */
-#define LCD_DC  PIN2_bm
-#define LCD_RST PIN3_bm
-#define LCD_SCE SPI_SS_bm
 
 #define NUM_VERTICES 5
 
@@ -66,7 +56,7 @@ int main(void) {
         mv_matrix.values[1][2] = i; // Move i in y direction.
         i++;
 
-        gl2d_bind_vertex_array(vertex_array, NUM_VERTICES * 2);
+        gl2d_bind_vertex_array(vertex_array, NUM_VERTICES);
         gl2d_bind_mvmatrix(&mv_matrix);
 
         gl2d_draw(NUM_VERTICES);
