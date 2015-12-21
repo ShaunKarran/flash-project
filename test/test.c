@@ -51,9 +51,6 @@ int main(void) {
     vertex_array[4].values[0] =  0;
     vertex_array[4].values[1] =  0;
 
-    struct FBUFF_Buffer_t f_buffer;
-    fbuff_init(&f_buffer, 132, 32);
-
     char i = 0;
     while (1) {
         ml_mat3_identity(&mv_matrix);
@@ -61,13 +58,10 @@ int main(void) {
         mv_matrix.values[1][2] = i; // Move i in y direction.
         i++;
 
-        // gl2d_bind_vertex_array(vertex_array, NUM_VERTICES);
+        gl2d_bind_vertex_array(vertex_array, NUM_VERTICES);
         gl2d_bind_mvmatrix(mv_matrix);
 
         gl2d_draw(NUM_VERTICES);
-
-        fbuff_fill(&f_buffer);
-        st7565r_write_array(f_buffer.buffer, f_buffer.size);
 
         gpio_tgl_pin(led0);
         _delay_ms(30); /* ~30fps */

@@ -7,9 +7,9 @@
 #include <stdlib.h>
 #include <util/delay.h>
 
+#include "bitbang_spi.h"
 #include "bitwise.h"
 #include "gpio.h"
-#include "usart_spi.h"
 
 /* Display pixel dimensions. */
 #define ST7565R_WIDTH  132
@@ -57,13 +57,14 @@
 #define ST7565R_CMD_READ_MODIFY_WRITE              0xE0
 
 struct ST7565R_t {
-    USART_t    *usart;
+    gpio_pin_t data;
+    gpio_pin_t clk;
     gpio_pin_t chip_select;
     gpio_pin_t a0;
     gpio_pin_t reset;
 };
 
-void st7565r_init(USART_t *usart, gpio_pin_t chip_select, gpio_pin_t a0, gpio_pin_t reset);
+void st7565r_init(gpio_pin_t data, gpio_pin_t clk, gpio_pin_t chip_select, gpio_pin_t a0, gpio_pin_t reset);
 
 void st7565r_write_data(unsigned char data);
 

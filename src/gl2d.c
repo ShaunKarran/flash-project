@@ -14,7 +14,8 @@
 static struct FBUFF_Buffer_t frame_buffer;
 static void (*render)(unsigned char *, size_t);
 
-static vec2_t *VERTEX_ARRAY;
+// static vec2_t *VERTEX_ARRAY;
+static vec2_t VERTEX_ARRAY[128];
 static mat3_t MV_MATRIX;
 static mat3_t PROJECTION_MATRIX;
 static mat3_t VIEWPORT_MATRIX;
@@ -55,7 +56,7 @@ void gl2d_orthographic(float left, float right, float bottom, float top)
 
 void gl2d_bind_vertex_array(vec2_t *vertex_array, size_t array_length)
 {
-    VERTEX_ARRAY = realloc(VERTEX_ARRAY, array_length * sizeof(vec2_t));
+    // VERTEX_ARRAY = realloc(VERTEX_ARRAY, array_length * sizeof(vec2_t));
 
     for (size_t i = 0; i < array_length; i++) {
         VERTEX_ARRAY[i] = vertex_array[i];
