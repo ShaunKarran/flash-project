@@ -2,13 +2,14 @@
 #include <util/delay.h>
 
 #include "cpu.h"
+#include "fbuff.h"
 #include "gfx.h"
 #include "gpio.h"
 #include "st7565r.h"
 
 int main(void)
 {
-    struct GFX_Buffer_t gfx;
+    struct FBUFF_Buffer_t frame_buffer;
 
     cpu_set_speed(CPU_32MHz);
 
@@ -25,21 +26,18 @@ int main(void)
     gpio_set_output(lcd_reset);
     gpio_set_output(lcd_backlight);
 
-    st7565r_init(&USARTD0, lcd_chip_select, lcd_a0, lcd_reset);
+    fbuff_init(&frame_buffer, ST7565R_WIDTH, ST7565R_HEIGHT);
+
+    st7565r_init(lcd_data, lcd_clock, lcd_chip_select, lcd_a0, lcd_reset);
     gpio_set_pin(lcd_backlight);
 
     gpio_pin_t led0 = gpio_create_pin(&PORTR, PIN0_bm);
     gpio_set_output(led0);
 
-    gfx_init(&gfx, ST7565R_WIDTH, ST7565R_HEIGHT, st7565r_write_array);
-    gfx_bind_buffer(&gfx);
-
-    short i = 0;
     while (1) {
-        if (i > 132) { i = 0; }
-        gfx_clear();
-        gfx_draw_circle(i++, 16, 10);
-        gfx_render();
+        fbuff_fill(&frame_buffer);
+        fbuff_clr_pixel(10, 10, &frame_buffer);
+        st7565r_write_array(frame_buffer.buffer, frame_buffer.size);
 
         gpio_tgl_pin(led0);
         _delay_ms(30);

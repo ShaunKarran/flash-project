@@ -33,7 +33,7 @@ TARGET = ./test/test
 # List C source files here. (C dependencies are automatically generated.)
 SRC = $(TARGET).c
 SRC += ./src/cpu.c ./src/gfx.c ./src/gl2d.c ./src/lcd5110.c ./src/ml.c ./src/spi.c ./src/st7565r.c\
-		./src/usart_spi.c ./src/gpio.c
+		./src/usart_spi.c ./src/gpio.c ./src/fbuff.c
 
 
 # MCU name, you MUST set this to match the board you are using
