@@ -3,17 +3,17 @@
 
 static struct ST7565R_t LCD;
 
-void st7565r_init(USART_t *usart, gpio_pin_t chip_select, gpio_pin_t a0, gpio_pin_t reset)
+void st7565r_init(gpio_pin_t data, gpio_pin_t clk, gpio_pin_t chip_select, gpio_pin_t a0, gpio_pin_t reset)
 {
-    LCD.usart       = usart;
+    LCD.data        = data;
+    LCD.clk         = clk;
     LCD.chip_select = chip_select;
     LCD.a0          = a0;
     LCD.reset       = reset;
 
+    gpio_set_pin(LCD.clk);
     gpio_set_pin(LCD.chip_select);
     gpio_set_pin(LCD.reset);
-
-    usart_spi_init(usart);
 
     st7564r_hard_reset();
 
@@ -33,7 +33,15 @@ void st7565r_write_data(unsigned char data)
     gpio_set_pin(LCD.a0);
 
     gpio_clr_pin(LCD.chip_select);
-    usart_spi_write(LCD.usart, data);
+    for (int i = 7; i > -1; i--) {
+        gpio_clr_pin(LCD.clk);
+        if (get_bit(data, i)) {
+            gpio_set_pin(LCD.data);
+        } else {
+            gpio_clr_pin(LCD.data);
+        }
+        gpio_set_pin(LCD.clk);
+    }
     gpio_set_pin(LCD.chip_select);
 }
 
@@ -42,7 +50,15 @@ void st7565r_write_command(unsigned char cmd)
     gpio_clr_pin(LCD.a0);
 
     gpio_clr_pin(LCD.chip_select);
-    usart_spi_write(LCD.usart, cmd);
+    for (int i = 7; i > -1; i--) {
+        gpio_clr_pin(LCD.clk);
+        if (get_bit(cmd, i)) {
+            gpio_set_pin(LCD.data);
+        } else {
+            gpio_clr_pin(LCD.data);
+        }
+        gpio_set_pin(LCD.clk);
+    }
     gpio_set_pin(LCD.chip_select);
 }
 
