@@ -15,7 +15,7 @@ static struct FBUFF_Buffer_t frame_buffer;
 static void (*render)(unsigned char *, size_t);
 
 static vec2_t *VERTEX_ARRAY;
-static mat3_t *MV_MATRIX;
+static mat3_t MV_MATRIX;
 static mat3_t PROJECTION_MATRIX;
 static mat3_t VIEWPORT_MATRIX;
 
@@ -62,7 +62,7 @@ void gl2d_bind_vertex_array(vec2_t *vertex_array, size_t array_length)
     }
 }
 
-void gl2d_bind_mvmatrix(mat3_t *mv_matrix)
+void gl2d_bind_mvmatrix(mat3_t mv_matrix)
 {
     MV_MATRIX = mv_matrix;
 }
@@ -76,7 +76,7 @@ void gl2d_draw(size_t num_verticies)
         vertex.values[1] = VERTEX_ARRAY[i].values[1];
         vertex.values[2] = 1;
 
-        vertex = ml_multiply_mat3_vec3(MV_MATRIX, &vertex);
+        vertex = ml_multiply_mat3_vec3(&MV_MATRIX, &vertex);
         vertex = ml_multiply_mat3_vec3(&PROJECTION_MATRIX, &vertex);
         vertex = ml_multiply_mat3_vec3(&VIEWPORT_MATRIX, &vertex);
 
