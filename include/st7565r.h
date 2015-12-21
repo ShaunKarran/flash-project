@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <util/delay.h>
 
+#include "bitbang_spi.h"
 #include "bitwise.h"
 #include "gpio.h"
 
