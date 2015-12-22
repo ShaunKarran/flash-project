@@ -58,8 +58,8 @@ int main(void) {
         mv_matrix.values[1][2] = i; // Move i in y direction.
         i++;
 
-        gl2d_bind_vertex_array(vertex_array, NUM_VERTICES);
-        gl2d_bind_mvmatrix(mv_matrix);
+        gl2d_bind_vertex_array(vertex_array);
+        gl2d_bind_mvmatrix(&mv_matrix);
 
         gl2d_draw(NUM_VERTICES);
 
