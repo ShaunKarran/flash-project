@@ -24,9 +24,9 @@ void gl2d_viewport(int x, int y, int width, int height);
 
 void gl2d_orthographic(float left, float right, float bottom, float top);
 
-void gl2d_bind_vertex_array(vec2_t *vertex_array, size_t array_length);
+void gl2d_bind_vertex_array(vec2_t *vertex_array);
 
-void gl2d_bind_mvmatrix(mat3_t mv_matrix);
+void gl2d_bind_mvmatrix(mat3_t *mv_matrix);
 
 void gl2d_draw(size_t num_verticies);
 

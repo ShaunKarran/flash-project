@@ -15,7 +15,8 @@ static struct FBUFF_Buffer_t frame_buffer;
 static void (*render)(unsigned char *, size_t);
 
 static vec2_t *VERTEX_ARRAY;
-static mat3_t MV_MATRIX;
+static vec2_t *MODIFIED_VERTEX_ARRAY;
+static mat3_t *MV_MATRIX;
 static mat3_t PROJECTION_MATRIX;
 static mat3_t VIEWPORT_MATRIX;
 
@@ -53,16 +54,12 @@ void gl2d_orthographic(float left, float right, float bottom, float top)
 
 }
 
-void gl2d_bind_vertex_array(vec2_t *vertex_array, size_t array_length)
+void gl2d_bind_vertex_array(vec2_t *vertex_array)
 {
-    VERTEX_ARRAY = realloc(VERTEX_ARRAY, array_length * sizeof(vec2_t));
-
-    for (size_t i = 0; i < array_length; i++) {
-        VERTEX_ARRAY[i] = vertex_array[i];
-    }
+    VERTEX_ARRAY = vertex_array;
 }
 
-void gl2d_bind_mvmatrix(mat3_t mv_matrix)
+void gl2d_bind_mvmatrix(mat3_t *mv_matrix)
 {
     MV_MATRIX = mv_matrix;
 }
@@ -70,18 +67,19 @@ void gl2d_bind_mvmatrix(mat3_t mv_matrix)
 void gl2d_draw(size_t num_verticies)
 {
     vec3_t vertex;
+    MODIFIED_VERTEX_ARRAY = realloc(MODIFIED_VERTEX_ARRAY, num_verticies * sizeof(vec2_t));
 
     for (size_t i = 0; i < num_verticies; i++) {
         vertex.values[0] = VERTEX_ARRAY[i].values[0];
         vertex.values[1] = VERTEX_ARRAY[i].values[1];
         vertex.values[2] = 1;
 
-        vertex = ml_multiply_mat3_vec3(&MV_MATRIX, &vertex);
+        vertex = ml_multiply_mat3_vec3(MV_MATRIX, &vertex);
         vertex = ml_multiply_mat3_vec3(&PROJECTION_MATRIX, &vertex);
         vertex = ml_multiply_mat3_vec3(&VIEWPORT_MATRIX, &vertex);
 
-        VERTEX_ARRAY[i].values[0] = vertex.values[0];
-        VERTEX_ARRAY[i].values[1] = vertex.values[1];
+        MODIFIED_VERTEX_ARRAY[i].values[0] = vertex.values[0];
+        MODIFIED_VERTEX_ARRAY[i].values[1] = vertex.values[1];
     }
 
     gl2d_draw_lines(num_verticies);
@@ -93,7 +91,7 @@ void gl2d_draw(size_t num_verticies)
 static void gl2d_draw_lines(size_t num_verticies)
 {
     for (size_t i = 0; i < num_verticies - 1; i++) {
-        gl2d_draw_line(VERTEX_ARRAY[i], VERTEX_ARRAY[i + 1]);
+        gl2d_draw_line(MODIFIED_VERTEX_ARRAY[i], MODIFIED_VERTEX_ARRAY[i + 1]);
     }
 }
 
