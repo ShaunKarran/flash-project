@@ -14,6 +14,14 @@ typedef struct Vec3_t {
     float values[3];
 } vec3_t;
 
+typedef struct Vec4_t {
+    float values[4];
+} vec4_t;
+
+typedef struct Mat2_t {
+    float values[2][2];
+} mat2_t;
+
 typedef struct Mat3_t {
     float values[3][3];
 } mat3_t;
@@ -23,6 +31,8 @@ typedef struct Mat4_t {
 } mat4_t;
 
 void ml_mat3_identity(mat3_t *matrix);
+
+void ml_mat4_identity(mat4_t *matrix);
 
 vec3_t ml_multiply_mat3_vec3(mat3_t *matrix, vec3_t *vector);
 

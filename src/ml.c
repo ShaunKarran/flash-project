@@ -14,6 +14,19 @@ void ml_mat3_identity(mat3_t *matrix)
     }
 }
 
+void ml_mat4_identity(mat4_t *matrix)
+{
+    for (int m = 0; m < 4; m++) {
+        for (int n = 0; n < 4; n++) {
+            if (m == n) {
+                matrix->values[m][n] = 1;
+            } else {
+                matrix->values[m][n] = 0;
+            }
+        }
+    }
+}
+
 vec3_t ml_multiply_mat3_vec3(mat3_t *matrix, vec3_t *vector)
 {
     vec3_t result;
