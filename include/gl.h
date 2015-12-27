@@ -22,16 +22,16 @@ void gl_init(size_t width, size_t height, void (*render_function)(unsigned char 
 
 void gl_viewport(int x, int y, int width, int height);
 
-void gl_orthographic(float left, float right, float bottom, float top);
+void gl_orthographic(float left, float right, float bottom, float top, float near, float far);
 
-void gl_bind_vertex_array(vec2_t *vertex_array);
+void gl_bind_vertex_array(vec3_t *vertex_array);
 
-void gl_bind_mvmatrix(mat3_t *mv_matrix);
+void gl_bind_mvmatrix(mat4_t *mv_matrix);
 
 void gl_draw(size_t num_verticies);
 
 static void gl_draw_lines(size_t num_verticies);
 
-static void gl_draw_line(vec2_t p1, vec2_t p2);
+static void gl_draw_line(float x1f, float y1f, float x2f, float y2f);
 
 #endif /* _GL_H_ */

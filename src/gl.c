@@ -14,19 +14,19 @@
 static struct FBUFF_Buffer_t frame_buffer;
 static void (*render)(unsigned char *, size_t);
 
-static vec2_t *VERTEX_ARRAY;
-static vec2_t *MODIFIED_VERTEX_ARRAY;
-static mat3_t *MV_MATRIX;
-static mat3_t PROJECTION_MATRIX;
-static mat3_t VIEWPORT_MATRIX;
+static vec3_t *VERTEX_ARRAY;
+static vec3_t *TRANSFORMED_VERTICES;
+static mat4_t *MV_MATRIX;
+static mat4_t PROJECTION_MATRIX;
+static mat4_t VIEWPORT_MATRIX;
 
 void gl_init(size_t width, size_t height, void (*render_function)(unsigned char *, size_t))
 {
     fbuff_init(&frame_buffer, width, height);
     render = render_function;
 
-    ml_mat3_identity(&PROJECTION_MATRIX);
-    ml_mat3_identity(&VIEWPORT_MATRIX);
+    ml_mat4_identity(&PROJECTION_MATRIX);
+    ml_mat4_identity(&VIEWPORT_MATRIX);
     gl_viewport(0, 0, width, height);
 }
 
@@ -36,50 +36,54 @@ void gl_viewport(int x, int y, int width, int height)
     height = height - 1;
 
     /* Scale from NDC to viewport size, and translate to viewport location. */
-    VIEWPORT_MATRIX.values[0][2] = width  / 2.0f + x; /* Move to location of viewport. */
-    VIEWPORT_MATRIX.values[1][2] = height / 2.0f + y;
+    VIEWPORT_MATRIX.values[0][3] = width  / 2.0f + x; /* Move to location of viewport. */
+    VIEWPORT_MATRIX.values[1][3] = height / 2.0f + y;
     VIEWPORT_MATRIX.values[0][0] = width  / 2.0f; /* Scale to size of viewport. */
     VIEWPORT_MATRIX.values[1][1] = height / 2.0f;
 }
 
-void gl_orthographic(float left, float right, float bottom, float top)
+void gl_orthographic(float left, float right, float bottom, float top, float near, float far)
 {
-    /* Transform the viewport to NDC by scaling the viewport to be from -1 to 1 in both axis. */
-    PROJECTION_MATRIX.values[0][0] = 2.0f / (right - left); /* Centre on the x axis. */
-    PROJECTION_MATRIX.values[1][1] = 2.0f / (top - bottom); /* Centre on the y axis. */
+    /* NOTE: Can be simplified. See http://www.songho.ca/opengl/gl_projectionmatrix.html */
+    /* Transform viewport to clip coords by centring on 0, 0. */
+    PROJECTION_MATRIX.values[0][0] = 2.0f / (right - left);
+    PROJECTION_MATRIX.values[1][1] = 2.0f / (top - bottom);
+    PROJECTION_MATRIX.values[2][2] = 2.0f / (far - near);
 
-    /* Transform the viewport to clip coords by centring on 0, 0. */
-    PROJECTION_MATRIX.values[0][2] = -((float)right + left) / (right - left); /* Centre on the x axis. */
-    PROJECTION_MATRIX.values[1][2] = -((float)top + bottom) / (top - bottom); /* Centre on the y axis. */
-
+    /* Transform viewport to NDC by scaling the viewport to be from -1 to 1 in both axis. */
+    PROJECTION_MATRIX.values[0][3] = -((float)right + left) / (right - left);
+    PROJECTION_MATRIX.values[1][3] = -((float)top + bottom) / (top - bottom);
+    PROJECTION_MATRIX.values[2][3] = -((float)far + near) / (far - near);
 }
 
-void gl_bind_vertex_array(vec2_t *vertex_array)
+void gl_bind_vertex_array(vec3_t *vertex_array)
 {
     VERTEX_ARRAY = vertex_array;
 }
 
-void gl_bind_mvmatrix(mat3_t *mv_matrix)
+void gl_bind_mvmatrix(mat4_t *mv_matrix)
 {
     MV_MATRIX = mv_matrix;
 }
 
 void gl_draw(size_t num_verticies)
 {
-    vec3_t vertex;
-    MODIFIED_VERTEX_ARRAY = realloc(MODIFIED_VERTEX_ARRAY, num_verticies * sizeof(vec2_t));
+    vec4_t vertex;
+    TRANSFORMED_VERTICES = realloc(TRANSFORMED_VERTICES, num_verticies * sizeof(vec3_t));
 
     for (size_t i = 0; i < num_verticies; i++) {
         vertex.values[0] = VERTEX_ARRAY[i].values[0];
         vertex.values[1] = VERTEX_ARRAY[i].values[1];
-        vertex.values[2] = 1;
+        vertex.values[2] = VERTEX_ARRAY[i].values[2];
+        vertex.values[3] = 1;
 
-        vertex = ml_multiply_mat3_vec3(MV_MATRIX, &vertex);
-        vertex = ml_multiply_mat3_vec3(&PROJECTION_MATRIX, &vertex);
-        vertex = ml_multiply_mat3_vec3(&VIEWPORT_MATRIX, &vertex);
+        vertex = ml_multiply_mat4_vec4(MV_MATRIX, &vertex);
+        vertex = ml_multiply_mat4_vec4(&PROJECTION_MATRIX, &vertex);
+        vertex = ml_multiply_mat4_vec4(&VIEWPORT_MATRIX, &vertex);
 
-        MODIFIED_VERTEX_ARRAY[i].values[0] = vertex.values[0];
-        MODIFIED_VERTEX_ARRAY[i].values[1] = vertex.values[1];
+        TRANSFORMED_VERTICES[i].values[0] = vertex.values[0];
+        TRANSFORMED_VERTICES[i].values[1] = vertex.values[1];
+        TRANSFORMED_VERTICES[i].values[2] = vertex.values[2];
     }
 
     gl_draw_lines(num_verticies);
@@ -91,16 +95,20 @@ void gl_draw(size_t num_verticies)
 static void gl_draw_lines(size_t num_verticies)
 {
     for (size_t i = 0; i < num_verticies - 1; i++) {
-        gl_draw_line(MODIFIED_VERTEX_ARRAY[i], MODIFIED_VERTEX_ARRAY[i + 1]);
+        gl_draw_line(TRANSFORMED_VERTICES[i].values[0],
+                     TRANSFORMED_VERTICES[i].values[1],
+                     TRANSFORMED_VERTICES[i + 1].values[0],
+                     TRANSFORMED_VERTICES[i + 1].values[1]);
     }
 }
 
-static void gl_draw_line(vec2_t p1, vec2_t p2)
+/* NOTE: These should be vec2_t. This is a temporary solution. */
+static void gl_draw_line(float x1f, float y1f, float x2f, float y2f)
 {
-    int x1 = (int) roundf(p1.values[0]);
-    int y1 = (int) roundf(p1.values[1]);
-    int x2 = (int) roundf(p2.values[0]);
-    int y2 = (int) roundf(p2.values[1]);
+    int x1 = (int)roundf(x1f);
+    int y1 = (int)roundf(y1f);
+    int x2 = (int)roundf(x2f);
+    int y2 = (int)roundf(y2f);
 
     int dx = abs(x2 - x1);
 	int dy = abs(y2 - y1);
