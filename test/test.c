@@ -4,7 +4,7 @@
 
 #include "cpu.h"
 #include "fbuff.h"
-#include "gl2d.h"
+#include "gl.h"
 #include "gpio.h"
 #include "ml.h"
 #include "st7565r.h"
@@ -36,8 +36,8 @@ int main(void) {
     gpio_pin_t led0 = gpio_create_pin(&PORTR, PIN0_bm);
     gpio_set_output(led0);
 
-    gl2d_init(ST7565R_WIDTH, ST7565R_HEIGHT, st7565r_write_array);
-    gl2d_orthographic(0, ST7565R_WIDTH - 1, ST7565R_HEIGHT - 1, 0);
+    gl_init(ST7565R_WIDTH, ST7565R_HEIGHT, st7565r_write_array);
+    gl_orthographic(0, ST7565R_WIDTH - 1, ST7565R_HEIGHT - 1, 0);
 
     /* Defines the verticies to draw. */
     vertex_array[0].values[0] =  0;
@@ -58,10 +58,10 @@ int main(void) {
         mv_matrix.values[1][2] = i; // Move i in y direction.
         i++;
 
-        gl2d_bind_vertex_array(vertex_array);
-        gl2d_bind_mvmatrix(&mv_matrix);
+        gl_bind_vertex_array(vertex_array);
+        gl_bind_mvmatrix(&mv_matrix);
 
-        gl2d_draw(NUM_VERTICES);
+        gl_draw(NUM_VERTICES);
 
         gpio_tgl_pin(led0);
         _delay_ms(30); /* ~30fps */
