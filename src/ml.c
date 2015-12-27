@@ -3,14 +3,14 @@
 
 void ml_mat2_identity(mat2_t *matrix)
 {
-    memset(matrix, 0, 4);
+    memset(matrix, 0, 4 * sizeof(float));
     matrix->values[0][0] = 1;
     matrix->values[1][1] = 1;
 }
 
 void ml_mat3_identity(mat3_t *matrix)
 {
-    memset(matrix, 0, 9);
+    memset(matrix->values, 0, 9 * sizeof(float));
     matrix->values[0][0] = 1;
     matrix->values[1][1] = 1;
     matrix->values[2][2] = 1;
@@ -18,7 +18,7 @@ void ml_mat3_identity(mat3_t *matrix)
 
 void ml_mat4_identity(mat4_t *matrix)
 {
-    memset(matrix, 0, 16);
+    memset(matrix, 0, 16 * sizeof(float));
     matrix->values[0][0] = 1;
     matrix->values[1][1] = 1;
     matrix->values[2][2] = 1;

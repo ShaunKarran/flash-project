@@ -15,8 +15,8 @@ void test_4();
 int main(void)
 {
     // test_1();
-    // test_2();
-    test_3();
+    test_2();
+    // test_3();
 
     return 0;
 }
@@ -63,6 +63,8 @@ void test_2()
 
     ml_mat3_identity(&mv_matrix);
     ml_mat3_identity(&proj_matrix);
+    ml_print_mat3(&mv_matrix);
+    ml_print_mat3(&proj_matrix);
     proj_matrix.values[0][2] = -42;
     proj_matrix.values[1][2] = -24;
 
