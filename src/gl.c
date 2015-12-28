@@ -25,8 +25,6 @@ void gl_init(size_t width, size_t height, void (*render_function)(unsigned char 
     fbuff_init(&frame_buffer, width, height);
     render = render_function;
 
-    ml_mat4_identity(&PROJECTION_MATRIX);
-    ml_mat4_identity(&VIEWPORT_MATRIX);
     gl_viewport(0, 0, width, height);
 }
 
@@ -34,6 +32,7 @@ void gl_viewport(int x, int y, int width, int height)
 {
     width  = width - 1;
     height = height - 1;
+    ml_mat4_identity(&VIEWPORT_MATRIX);
 
     /* Scale from NDC to viewport size, and translate to viewport location. */
     VIEWPORT_MATRIX.values[0][3] = width  / 2.0f + x; /* Move to location of viewport. */
@@ -44,16 +43,37 @@ void gl_viewport(int x, int y, int width, int height)
 
 void gl_orthographic(float left, float right, float bottom, float top, float near, float far)
 {
-    /* NOTE: Can be simplified. See http://www.songho.ca/opengl/gl_projectionmatrix.html */
-    /* Transform viewport to clip coords by centring on 0, 0. */
-    PROJECTION_MATRIX.values[0][0] = 2.0f / (right - left);
-    PROJECTION_MATRIX.values[1][1] = 2.0f / (top - bottom);
-    PROJECTION_MATRIX.values[2][2] = 2.0f / (far - near);
+    ml_mat4_identity(&PROJECTION_MATRIX);
 
-    /* Transform viewport to NDC by scaling the viewport to be from -1 to 1 in both axis. */
-    PROJECTION_MATRIX.values[0][3] = -((float)right + left) / (right - left);
-    PROJECTION_MATRIX.values[1][3] = -((float)top + bottom) / (top - bottom);
-    PROJECTION_MATRIX.values[2][3] = -((float)far + near) / (far - near);
+    /* Transform viewport to clip coords by centring on 0, 0. */
+    PROJECTION_MATRIX.values[0][0] =  2.0f / (right - left);
+    PROJECTION_MATRIX.values[1][1] =  2.0f / (top - bottom);
+    PROJECTION_MATRIX.values[2][2] = -2.0f / (far - near);
+    PROJECTION_MATRIX.values[0][3] = -(right + left) / (right - left);
+    PROJECTION_MATRIX.values[1][3] = -(top + bottom) / (top - bottom);
+    PROJECTION_MATRIX.values[2][3] = -(far + near) / (far - near);
+
+    /* NOTE: Simplified version from http://www.songho.ca/opengl/gl_projectionmatrix.html */
+    // PROJECTION_MATRIX.values[0][0] =  1.0f / right;
+    // PROJECTION_MATRIX.values[1][1] =  1.0f / top;
+    // PROJECTION_MATRIX.values[2][2] = -2.0f / (far - near);
+    // PROJECTION_MATRIX.values[2][3] = -(far + near) / (far - near);
+
+}
+
+void gl_perspective(float fov_y, float aspect_ratio, float near, float far)
+{
+    float f;
+
+    fov_y = fov_y * M_PI / 180.0; /* Convert from degrees to radians. */
+    f = 1 / tan(fov_y / 2);
+    ml_mat4_identity(&PROJECTION_MATRIX);
+
+    PROJECTION_MATRIX.values[0][0] = f / aspect_ratio;
+    PROJECTION_MATRIX.values[1][1] = f;
+    PROJECTION_MATRIX.values[2][2] = (near + far) / (near - far);
+    PROJECTION_MATRIX.values[2][3] = (2 * near * far) / (near - far);
+    PROJECTION_MATRIX.values[3][2] = -1;
 }
 
 void gl_bind_vertex_array(vec3_t *vertex_array)
@@ -69,6 +89,7 @@ void gl_bind_mvmatrix(mat4_t *mv_matrix)
 void gl_draw(size_t num_verticies)
 {
     vec4_t vertex;
+
     TRANSFORMED_VERTICES = realloc(TRANSFORMED_VERTICES, num_verticies * sizeof(vec3_t));
 
     for (size_t i = 0; i < num_verticies; i++) {
@@ -79,6 +100,7 @@ void gl_draw(size_t num_verticies)
 
         vertex = ml_multiply_mat4_vec4(MV_MATRIX, &vertex);
         vertex = ml_multiply_mat4_vec4(&PROJECTION_MATRIX, &vertex);
+        vertex = gl_perspective_devision(&vertex);
         vertex = ml_multiply_mat4_vec4(&VIEWPORT_MATRIX, &vertex);
 
         TRANSFORMED_VERTICES[i].values[0] = vertex.values[0];
@@ -137,4 +159,16 @@ static void gl_draw_line(float x1f, float y1f, float x2f, float y2f)
 			y1 += shift_y;
 		}
 	}
+}
+
+static vec4_t gl_perspective_devision(vec4_t *vertex)
+{
+    vec4_t result;
+
+    result.values[0] = vertex->values[0] / vertex->values[3];
+    result.values[1] = vertex->values[1] / vertex->values[3];
+    result.values[2] = vertex->values[2] / vertex->values[3];
+    result.values[3] = vertex->values[3];
+
+    return result;
 }
