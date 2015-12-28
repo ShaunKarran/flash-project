@@ -3,7 +3,7 @@
 
 void ml_mat2_identity(mat2_t *matrix)
 {
-    memset(matrix, 0, 4 * sizeof(float));
+    memset(matrix->values, 0, 4 * sizeof(float));
     matrix->values[0][0] = 1;
     matrix->values[1][1] = 1;
 }
@@ -18,7 +18,7 @@ void ml_mat3_identity(mat3_t *matrix)
 
 void ml_mat4_identity(mat4_t *matrix)
 {
-    memset(matrix, 0, 16 * sizeof(float));
+    memset(matrix->values, 0, 16 * sizeof(float));
     matrix->values[0][0] = 1;
     matrix->values[1][1] = 1;
     matrix->values[2][2] = 1;
@@ -97,6 +97,49 @@ vec4_t ml_multiply_mat4_vec4(mat4_t *matrix, vec4_t *vector)
     return result;
 }
 
+void ml_translate(mat4_t *matrix, float x, float y, float z)
+{
+    matrix->values[0][3] += x;
+    matrix->values[1][3] += y;
+    matrix->values[2][3] += z;
+}
+
+void ml_rotate_x(mat4_t *matrix, float angle)
+{
+    mat4_t rotation;
+    ml_mat4_identity(&rotation);
+    rotation.values[1][1] =  cos(deg_to_rad(angle));
+    rotation.values[1][2] = -sin(deg_to_rad(angle));
+    rotation.values[2][1] =  sin(deg_to_rad(angle));
+    rotation.values[2][2] =  cos(deg_to_rad(angle));
+
+    *matrix = ml_multiply_mat4_mat4(&rotation, matrix);
+}
+
+void ml_rotate_y(mat4_t *matrix, float angle)
+{
+    mat4_t rotation;
+    ml_mat4_identity(&rotation);
+    rotation.values[0][0] =  cos(deg_to_rad(angle));
+    rotation.values[0][2] =  sin(deg_to_rad(angle));
+    rotation.values[2][0] = -sin(deg_to_rad(angle));
+    rotation.values[2][2] =  cos(deg_to_rad(angle));
+
+    *matrix = ml_multiply_mat4_mat4(&rotation, matrix);
+}
+
+void ml_rotate_z(mat4_t *matrix, float angle)
+{
+    mat4_t rotation;
+    ml_mat4_identity(&rotation);
+    rotation.values[0][0] =  cos(deg_to_rad(angle));
+    rotation.values[0][1] =  sin(deg_to_rad(angle));
+    rotation.values[1][0] = -sin(deg_to_rad(angle));
+    rotation.values[1][1] =  cos(deg_to_rad(angle));
+
+    *matrix = ml_multiply_mat4_mat4(&rotation, matrix);
+}
+
 void ml_print_mat2(mat2_t *matrix)
 {
     for (int m = 0; m < 2; m++) {
@@ -117,10 +160,41 @@ void ml_print_mat3(mat3_t *matrix)
     }
 }
 
+void ml_print_mat4(mat4_t *matrix)
+{
+    for (int m = 0; m < 4; m++) {
+        for (int n = 0; n < 4; n++) {
+            printf("%f ", matrix->values[m][n]);
+        }
+        printf("\n");
+    }
+}
+
+void ml_print_vec2(vec2_t *vector)
+{
+    for (int i = 0; i < 2; i++) {
+        printf("%f ", vector->values[i]);
+    }
+    printf("\n");
+}
+
 void ml_print_vec3(vec3_t *vector)
 {
     for (int i = 0; i < 3; i++) {
         printf("%f ", vector->values[i]);
     }
     printf("\n");
+}
+
+void ml_print_vec4(vec4_t *vector)
+{
+    for (int i = 0; i < 4; i++) {
+        printf("%f ", vector->values[i]);
+    }
+    printf("\n");
+}
+
+static float deg_to_rad(float degrees)
+{
+    return degrees * M_PI / 180.0;
 }
