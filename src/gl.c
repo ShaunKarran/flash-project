@@ -11,14 +11,16 @@
 
 #include "gl.h"
 
+#include <unistd.h> /* For sleep() for testing. */
+
 static struct FBUFF_Buffer_t frame_buffer;
 static void (*render)(unsigned char *, size_t);
 
-static vec3_t *VERTEX_ARRAY;
-static vec3_t *TRANSFORMED_VERTICES;
-static mat4_t *MV_MATRIX;
-static mat4_t PROJECTION_MATRIX;
-static mat4_t VIEWPORT_MATRIX;
+static vec3_t *VERTEX_ARRAY;    /* Points to users array of vertices. */
+static vec3_t *TEMP_VERTICES;   /* To store transformed vertices while drawing. */
+static mat4_t *MV_MATRIX;       /* Model-View matrix. To transform to eye coordinates. */
+static mat4_t P_MATRIX;         /* Projection matrix. To transform to clip coordinates. */
+static mat3_t VIEW_MATRIX;      /* To transform to screen coordinates. */
 
 void gl_init(size_t width, size_t height, void (*render_function)(unsigned char *, size_t))
 {
@@ -32,48 +34,59 @@ void gl_viewport(int x, int y, int width, int height)
 {
     width  = width - 1;
     height = height - 1;
-    ml_mat4_identity(&VIEWPORT_MATRIX);
+    ml_mat3_identity(&VIEW_MATRIX);
 
     /* Scale from NDC to viewport size, and translate to viewport location. */
-    VIEWPORT_MATRIX.values[0][3] = width  / 2.0f + x; /* Move to location of viewport. */
-    VIEWPORT_MATRIX.values[1][3] = height / 2.0f + y;
-    VIEWPORT_MATRIX.values[0][0] = width  / 2.0f; /* Scale to size of viewport. */
-    VIEWPORT_MATRIX.values[1][1] = height / 2.0f;
+    VIEW_MATRIX.values[0][2] = width  / 2.0f + x; /* Move to location of viewport. */
+    VIEW_MATRIX.values[1][2] = height / 2.0f + y;
+    VIEW_MATRIX.values[0][0] = width  / 2.0f; /* Scale to size of viewport. */
+    VIEW_MATRIX.values[1][1] = height / 2.0f;
 }
 
 void gl_orthographic(float left, float right, float bottom, float top, float near, float far)
 {
-    ml_mat4_identity(&PROJECTION_MATRIX);
+    ml_mat4_identity(&P_MATRIX);
 
     /* Transform viewport to clip coords by centring on 0, 0. */
-    PROJECTION_MATRIX.values[0][0] =  2.0f / (right - left);
-    PROJECTION_MATRIX.values[1][1] =  2.0f / (top - bottom);
-    PROJECTION_MATRIX.values[2][2] = -2.0f / (far - near);
-    PROJECTION_MATRIX.values[0][3] = -(right + left) / (right - left);
-    PROJECTION_MATRIX.values[1][3] = -(top + bottom) / (top - bottom);
-    PROJECTION_MATRIX.values[2][3] = -(far + near) / (far - near);
+    P_MATRIX.values[0][0] =  2.0f / (right - left);
+    P_MATRIX.values[1][1] =  2.0f / (top - bottom);
+    P_MATRIX.values[2][2] = -2.0f / (far - near);
+    P_MATRIX.values[0][3] = -(right + left) / (right - left);
+    P_MATRIX.values[1][3] = -(top + bottom) / (top - bottom);
+    P_MATRIX.values[2][3] = -(far + near) / (far - near);
 
     /* NOTE: Simplified version from http://www.songho.ca/opengl/gl_projectionmatrix.html */
-    // PROJECTION_MATRIX.values[0][0] =  1.0f / right;
-    // PROJECTION_MATRIX.values[1][1] =  1.0f / top;
-    // PROJECTION_MATRIX.values[2][2] = -2.0f / (far - near);
-    // PROJECTION_MATRIX.values[2][3] = -(far + near) / (far - near);
+    // P_MATRIX.values[0][0] =  1.0f / right;
+    // P_MATRIX.values[1][1] =  1.0f / top;
+    // P_MATRIX.values[2][2] = -2.0f / (far - near);
+    // P_MATRIX.values[2][3] = -(far + near) / (far - near);
 
 }
 
-void gl_perspective(float fov_y, float aspect_ratio, float near, float far)
+// void gl_perspective(float fov_y, float aspect_ratio, float near, float far)
+// {
+//     float f;
+//
+//     fov_y = fov_y * M_PI / 180.0; /* Convert from degrees to radians. */
+//     f = 1 / tan(fov_y / 2);
+//     ml_mat4_identity(&P_MATRIX);
+//
+//     P_MATRIX.values[0][0] = f / aspect_ratio;
+//     P_MATRIX.values[1][1] = f;
+//     P_MATRIX.values[2][2] = (near + far) / (near - far);
+//     P_MATRIX.values[2][3] = (2 * near * far) / (near - far);
+//     P_MATRIX.values[3][2] = -1;
+// }
+
+void gl_perspective(float left, float right, float bottom, float top, float near, float far)
 {
-    float f;
+    ml_mat4_identity(&P_MATRIX);
 
-    fov_y = fov_y * M_PI / 180.0; /* Convert from degrees to radians. */
-    f = 1 / tan(fov_y / 2);
-    ml_mat4_identity(&PROJECTION_MATRIX);
-
-    PROJECTION_MATRIX.values[0][0] = f / aspect_ratio;
-    PROJECTION_MATRIX.values[1][1] = f;
-    PROJECTION_MATRIX.values[2][2] = (near + far) / (near - far);
-    PROJECTION_MATRIX.values[2][3] = (2 * near * far) / (near - far);
-    PROJECTION_MATRIX.values[3][2] = -1;
+    P_MATRIX.values[0][0] = near / right;
+    P_MATRIX.values[1][1] = near / top;
+    P_MATRIX.values[2][2] = -(far + near) / (far - near);
+    P_MATRIX.values[2][3] = (-2 * far * near) / (far - near);
+    P_MATRIX.values[3][2] = -1;
 }
 
 void gl_bind_vertex_array(vec3_t *vertex_array)
@@ -88,24 +101,29 @@ void gl_bind_mvmatrix(mat4_t *mv_matrix)
 
 void gl_draw(size_t num_verticies)
 {
-    vec4_t vertex;
+    vec4_t vertex4;
+    vec3_t vertex3;
 
-    TRANSFORMED_VERTICES = realloc(TRANSFORMED_VERTICES, num_verticies * sizeof(vec3_t));
+    TEMP_VERTICES = realloc(TEMP_VERTICES, num_verticies * sizeof(vec3_t));
 
     for (size_t i = 0; i < num_verticies; i++) {
-        vertex.values[0] = VERTEX_ARRAY[i].values[0];
-        vertex.values[1] = VERTEX_ARRAY[i].values[1];
-        vertex.values[2] = VERTEX_ARRAY[i].values[2];
-        vertex.values[3] = 1;
+        vertex4.values[0] = VERTEX_ARRAY[i].values[0];
+        vertex4.values[1] = VERTEX_ARRAY[i].values[1];
+        vertex4.values[2] = VERTEX_ARRAY[i].values[2];
+        vertex4.values[3] = 1;
 
-        vertex = ml_multiply_mat4_vec4(MV_MATRIX, &vertex);
-        vertex = ml_multiply_mat4_vec4(&PROJECTION_MATRIX, &vertex);
-        vertex = gl_perspective_devision(&vertex);
-        vertex = ml_multiply_mat4_vec4(&VIEWPORT_MATRIX, &vertex);
+        vertex4 = ml_multiply_mat4_vec4(MV_MATRIX, &vertex4);
+        // printf("Before projection:"); ml_print_vec4(&vertex4);
+        // printf("P_MATRIX\n"); ml_print_mat4(&P_MATRIX);
+        vertex4 = ml_multiply_mat4_vec4(&P_MATRIX, &vertex4);
+        vertex3 = gl_perspective_devision(&vertex4);
+        // printf("After projection:"); ml_print_vec3(&vertex3);
+        vertex3.values[2] = 1;
+        vertex3 = ml_multiply_mat3_vec3(&VIEW_MATRIX, &vertex3);
+        // printf("Screen coords:"); ml_print_vec3(&vertex3);
+        // sleep(2);
 
-        TRANSFORMED_VERTICES[i].values[0] = vertex.values[0];
-        TRANSFORMED_VERTICES[i].values[1] = vertex.values[1];
-        TRANSFORMED_VERTICES[i].values[2] = vertex.values[2];
+        TEMP_VERTICES[i] = vertex3;
     }
 
     gl_draw_lines(num_verticies);
@@ -116,11 +134,13 @@ void gl_draw(size_t num_verticies)
 
 static void gl_draw_lines(size_t num_verticies)
 {
+    size_t i_1;
     for (size_t i = 0; i < num_verticies - 1; i++) {
-        gl_draw_line(TRANSFORMED_VERTICES[i].values[0],
-                     TRANSFORMED_VERTICES[i].values[1],
-                     TRANSFORMED_VERTICES[i + 1].values[0],
-                     TRANSFORMED_VERTICES[i + 1].values[1]);
+        i_1 = i + 1; /* Hopefully gain efficiency by only calcuating once. */
+        gl_draw_line(TEMP_VERTICES[i].values[0],
+                     TEMP_VERTICES[i].values[1],
+                     TEMP_VERTICES[i_1].values[0],
+                     TEMP_VERTICES[i_1].values[1]);
     }
 }
 
@@ -161,14 +181,13 @@ static void gl_draw_line(float x1f, float y1f, float x2f, float y2f)
 	}
 }
 
-static vec4_t gl_perspective_devision(vec4_t *vertex)
+static vec3_t gl_perspective_devision(vec4_t *vertex)
 {
-    vec4_t result;
+    vec3_t result;
 
     result.values[0] = vertex->values[0] / vertex->values[3];
     result.values[1] = vertex->values[1] / vertex->values[3];
     result.values[2] = vertex->values[2] / vertex->values[3];
-    result.values[3] = vertex->values[3];
 
     return result;
 }
