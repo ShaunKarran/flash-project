@@ -6,53 +6,29 @@
 #include <stdio.h>
 #include <string.h>
 
-typedef struct Vec2_t {
-    float values[2];
-} vec2_t;
+void ml_mat2_identity(float mat[][2]);
+void ml_mat3_identity(float mat[][3]);
+void ml_mat4_identity(float mat[][4]);
 
-typedef struct Vec3_t {
-    float values[3];
-} vec3_t;
+void ml_multiply_mat2_mat2(float mat_a[][2], float mat_b[][2], float out[][2]);
+void ml_multiply_mat3_mat3(float mat_a[][3], float mat_b[][3], float out[][3]);
+void ml_multiply_mat4_mat4(float mat_a[][4], float mat_b[][4], float out[][4]);
 
-typedef struct Vec4_t {
-    float values[4];
-} vec4_t;
+void ml_multiply_mat3_vec3(float mat[][3], float vec[3], float out[3]);
+void ml_multiply_mat4_vec4(float mat[][4], float vec[4], float out[4]);
 
-typedef struct Mat2_t {
-    float values[2][2];
-} mat2_t;
+void ml_translate(float mat[][4], float x, float y, float z);
+void ml_rotate_x(float mat[][4], float angle);
+void ml_rotate_y(float mat[][4], float angle);
+void ml_rotate_z(float mat[][4], float angle);
 
-typedef struct Mat3_t {
-    float values[3][3];
-} mat3_t;
+void ml_print_mat2(float mat[][2]);
+void ml_print_mat3(float mat[][3]);
+void ml_print_mat4(float mat[][4]);
 
-typedef struct Mat4_t {
-    float values[4][4];
-} mat4_t;
-
-void ml_mat2_identity(mat2_t *matrix);
-void ml_mat3_identity(mat3_t *matrix);
-void ml_mat4_identity(mat4_t *matrix);
-
-mat2_t ml_multiply_mat2_mat2(mat2_t *matrix_a, mat2_t *matrix_b);
-mat3_t ml_multiply_mat3_mat3(mat3_t *matrix_a, mat3_t *matrix_b);
-mat4_t ml_multiply_mat4_mat4(mat4_t *matrix_a, mat4_t *matrix_b);
-
-vec3_t ml_multiply_mat3_vec3(mat3_t *matrix, vec3_t *vector);
-vec4_t ml_multiply_mat4_vec4(mat4_t *matrix, vec4_t *vector);
-
-void ml_translate(mat4_t *matrix, float x, float y, float z);
-void ml_rotate_x(mat4_t *matrix, float angle);
-void ml_rotate_y(mat4_t *matrix, float angle);
-void ml_rotate_z(mat4_t *matrix, float angle);
-
-void ml_print_mat2(mat2_t *matrix);
-void ml_print_mat3(mat3_t *matrix);
-void ml_print_mat4(mat4_t *matrix);
-
-void ml_print_vec2(vec2_t *vector);
-void ml_print_vec3(vec3_t *vector);
-void ml_print_vec4(vec4_t *vector);
+void ml_print_vec2(float vec[2]);
+void ml_print_vec3(float vec[3]);
+void ml_print_vec4(float vec[4]);
 
 static float deg_to_rad(float degrees);
 

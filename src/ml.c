@@ -1,195 +1,215 @@
 
 #include "ml.h"
 
-void ml_mat2_identity(mat2_t *matrix)
+void ml_mat2_identity(float mat[][2])
 {
-    memset(matrix->values, 0, 4 * sizeof(float));
-    matrix->values[0][0] = 1;
-    matrix->values[1][1] = 1;
+    memset(mat, 0, 4 * sizeof(float));
+    mat[0][0] = 1;
+    mat[1][1] = 1;
 }
 
-void ml_mat3_identity(mat3_t *matrix)
+void ml_mat3_identity(float mat[][3])
 {
-    memset(matrix->values, 0, 9 * sizeof(float));
-    matrix->values[0][0] = 1;
-    matrix->values[1][1] = 1;
-    matrix->values[2][2] = 1;
+    memset(mat, 0, 9 * sizeof(float));
+    mat[0][0] = 1;
+    mat[1][1] = 1;
+    mat[2][2] = 1;
 }
 
-void ml_mat4_identity(mat4_t *matrix)
+void ml_mat4_identity(float mat[][4])
 {
-    memset(matrix->values, 0, 16 * sizeof(float));
-    matrix->values[0][0] = 1;
-    matrix->values[1][1] = 1;
-    matrix->values[2][2] = 1;
-    matrix->values[3][3] = 1;
+    memset(mat, 0, 16 * sizeof(float));
+    mat[0][0] = 1;
+    mat[1][1] = 1;
+    mat[2][2] = 1;
+    mat[3][3] = 1;
 }
 
-mat2_t ml_multiply_mat2_mat2(mat2_t *matrix_a, mat2_t *matrix_b)
+void ml_multiply_mat2_mat2(float mat_a[][2], float mat_b[][2], float out[][2])
 {
-    mat2_t result;
+    float temp[2][2];
 
-    for (int m = 0; m < 2; m++) {
-        for (int n = 0; n < 2; n++) {
-            result.values[m][n] =   matrix_a->values[m][0] * matrix_b->values[0][n] +
-                                    matrix_a->values[m][1] * matrix_b->values[1][n];
-        }
-    }
+    temp[0][0] = mat_a[0][0] * mat_b[0][0] + mat_a[0][1] * mat_b[1][0];
+    temp[0][1] = mat_a[0][0] * mat_b[0][1] + mat_a[0][1] * mat_b[1][1];
+    temp[1][0] = mat_a[1][0] * mat_b[0][0] + mat_a[1][1] * mat_b[1][0];
+    temp[1][1] = mat_a[1][0] * mat_b[0][1] + mat_a[1][1] * mat_b[1][1];
 
-    return result;
+    out[0][0] = temp[0][0];
+    out[0][1] = temp[0][1];
+    out[1][0] = temp[1][0];
+    out[1][1] = temp[1][1];
 }
 
-mat3_t ml_multiply_mat3_mat3(mat3_t *matrix_a, mat3_t *matrix_b)
+void ml_multiply_mat3_mat3(float mat_a[][3], float mat_b[][3], float out[][3])
 {
-    mat3_t result;
+    float temp[3][3];
 
     for (int m = 0; m < 3; m++) {
         for (int n = 0; n < 3; n++) {
-            result.values[m][n] =   matrix_a->values[m][0] * matrix_b->values[0][n] +
-                                    matrix_a->values[m][1] * matrix_b->values[1][n] +
-                                    matrix_a->values[m][2] * matrix_b->values[2][n];
+            temp[m][n] = mat_a[m][0] * mat_b[0][n] + mat_a[m][1] * mat_b[1][n] + mat_a[m][2] * mat_b[2][n];
         }
     }
 
-    return result;
+    for (int m = 0; m < 3; m++) {
+        for (int n = 0; n < 3; n++) {
+            out[m][n] = temp[m][n];
+        }
+    }
 }
 
-mat4_t ml_multiply_mat4_mat4(mat4_t *matrix_a, mat4_t *matrix_b)
+void ml_multiply_mat4_mat4(float mat_a[][4], float mat_b[][4], float out[][4])
 {
-    mat4_t result;
+    float temp[4][4];
 
     for (int m = 0; m < 4; m++) {
         for (int n = 0; n < 4; n++) {
-            result.values[m][n] =   matrix_a->values[m][0] * matrix_b->values[0][n] +
-                                    matrix_a->values[m][1] * matrix_b->values[1][n] +
-                                    matrix_a->values[m][2] * matrix_b->values[2][n] +
-                                    matrix_a->values[m][3] * matrix_b->values[3][n];
+            temp[m][n] =    mat_a[m][0] * mat_b[0][n] +
+                            mat_a[m][1] * mat_b[1][n] +
+                            mat_a[m][2] * mat_b[2][n] +
+                            mat_a[m][3] * mat_b[3][n];
         }
     }
 
-    return result;
-}
-
-vec3_t ml_multiply_mat3_vec3(mat3_t *matrix, vec3_t *vector)
-{
-    vec3_t result;
-
-    for (int m = 0; m < 3; m++) {
-        result.values[m] =  matrix->values[m][0] * vector->values[0] +
-                            matrix->values[m][1] * vector->values[1] +
-                            matrix->values[m][2] * vector->values[2];
-    }
-
-    return result;
-}
-
-vec4_t ml_multiply_mat4_vec4(mat4_t *matrix, vec4_t *vector)
-{
-    vec4_t result;
-
     for (int m = 0; m < 4; m++) {
-        result.values[m] =  matrix->values[m][0] * vector->values[0] +
-                            matrix->values[m][1] * vector->values[1] +
-                            matrix->values[m][2] * vector->values[2] +
-                            matrix->values[m][3] * vector->values[3];
+        for (int n = 0; n < 4; n++) {
+            out[m][n] = temp[m][n];
+        }
     }
-
-    return result;
 }
 
-void ml_translate(mat4_t *matrix, float x, float y, float z)
+void ml_multiply_mat3_vec3(float mat[][3], float vec[3], float out[3])
 {
-    matrix->values[0][3] += x;
-    matrix->values[1][3] += y;
-    matrix->values[2][3] += z;
+    float temp[3];
+
+    temp[0] = mat[0][0] * vec[0] + mat[0][1] * vec[1] + mat[0][2] * vec[2];
+    temp[1] = mat[1][0] * vec[0] + mat[1][1] * vec[1] + mat[1][2] * vec[2];
+    temp[2] = mat[2][0] * vec[0] + mat[2][1] * vec[1] + mat[2][2] * vec[2];
+
+    out[0] = temp[0];
+    out[1] = temp[1];
+    out[2] = temp[2];
 }
 
-void ml_rotate_x(mat4_t *matrix, float angle)
+void ml_multiply_mat4_vec4(float mat[][4], float vec[4], float out[4])
 {
-    mat4_t rotation;
-    ml_mat4_identity(&rotation);
-    rotation.values[1][1] =  cos(deg_to_rad(angle));
-    rotation.values[1][2] = -sin(deg_to_rad(angle));
-    rotation.values[2][1] =  sin(deg_to_rad(angle));
-    rotation.values[2][2] =  cos(deg_to_rad(angle));
+    float temp[4];
 
-    *matrix = ml_multiply_mat4_mat4(&rotation, matrix);
+    temp[0] = mat[0][0] * vec[0] + mat[0][1] * vec[1] + mat[0][2] * vec[2] + mat[0][3] * vec[3];
+    temp[1] = mat[1][0] * vec[0] + mat[1][1] * vec[1] + mat[1][2] * vec[2] + mat[1][3] * vec[3];
+    temp[2] = mat[2][0] * vec[0] + mat[2][1] * vec[1] + mat[2][2] * vec[2] + mat[2][3] * vec[3];
+    temp[3] = mat[3][0] * vec[0] + mat[3][1] * vec[1] + mat[3][2] * vec[2] + mat[3][3] * vec[3];
+
+    out[0] = temp[0];
+    out[1] = temp[1];
+    out[2] = temp[2];
+    out[3] = temp[3];
 }
 
-void ml_rotate_y(mat4_t *matrix, float angle)
+void ml_translate(float mat[][4], float x, float y, float z)
 {
-    mat4_t rotation;
-    ml_mat4_identity(&rotation);
-    rotation.values[0][0] =  cos(deg_to_rad(angle));
-    rotation.values[0][2] =  sin(deg_to_rad(angle));
-    rotation.values[2][0] = -sin(deg_to_rad(angle));
-    rotation.values[2][2] =  cos(deg_to_rad(angle));
-
-    *matrix = ml_multiply_mat4_mat4(&rotation, matrix);
+    mat[0][3] += x;
+    mat[1][3] += y;
+    mat[2][3] += z;
 }
 
-void ml_rotate_z(mat4_t *matrix, float angle)
+void ml_rotate_x(float mat[][4], float angle)
 {
-    mat4_t rotation;
-    ml_mat4_identity(&rotation);
-    rotation.values[0][0] =  cos(deg_to_rad(angle));
-    rotation.values[0][1] =  sin(deg_to_rad(angle));
-    rotation.values[1][0] = -sin(deg_to_rad(angle));
-    rotation.values[1][1] =  cos(deg_to_rad(angle));
+    float rotation[4][4];
+    float c, s;
 
-    *matrix = ml_multiply_mat4_mat4(&rotation, matrix);
+    ml_mat4_identity(rotation);
+    c = cos(deg_to_rad(angle));
+    s = sin(deg_to_rad(angle));
+    rotation[1][1] =  c;
+    rotation[1][2] = -s;
+    rotation[2][1] =  s;
+    rotation[2][2] =  c;
+
+    ml_multiply_mat4_mat4(rotation, mat, mat);
 }
 
-void ml_print_mat2(mat2_t *matrix)
+void ml_rotate_y(float mat[][4], float angle)
+{
+    float rotation[4][4];
+    float c, s;
+
+    ml_mat4_identity(rotation);
+    c = cos(deg_to_rad(angle));
+    s = sin(deg_to_rad(angle));
+    rotation[0][0] =  c;
+    rotation[0][2] =  s;
+    rotation[2][0] = -s;
+    rotation[2][2] =  c;
+
+    ml_multiply_mat4_mat4(rotation, mat, mat);
+}
+
+void ml_rotate_z(float mat[][4], float angle)
+{
+    float rotation[4][4];
+    float c, s;
+
+    ml_mat4_identity(rotation);
+    c = cos(deg_to_rad(angle));
+    s = sin(deg_to_rad(angle));
+    rotation[0][0] =  c;
+    rotation[0][1] =  s;
+    rotation[1][0] = -s;
+    rotation[1][1] =  c;
+
+    ml_multiply_mat4_mat4(rotation, mat, mat);
+}
+
+void ml_print_mat2(float mat[][2])
 {
     for (int m = 0; m < 2; m++) {
         for (int n = 0; n < 2; n++) {
-            printf("%f ", matrix->values[m][n]);
+            printf("%f ", mat[m][n]);
         }
         printf("\n");
     }
 }
 
-void ml_print_mat3(mat3_t *matrix)
+void ml_print_mat3(float mat[][3])
 {
     for (int m = 0; m < 3; m++) {
         for (int n = 0; n < 3; n++) {
-            printf("%f ", matrix->values[m][n]);
+            printf("%f ", mat[m][n]);
         }
         printf("\n");
     }
 }
 
-void ml_print_mat4(mat4_t *matrix)
+void ml_print_mat4(float mat[][4])
 {
     for (int m = 0; m < 4; m++) {
         for (int n = 0; n < 4; n++) {
-            printf("%f ", matrix->values[m][n]);
+            printf("%f ", mat[m][n]);
         }
         printf("\n");
     }
 }
 
-void ml_print_vec2(vec2_t *vector)
+void ml_print_vec2(float vec[2])
 {
     for (int i = 0; i < 2; i++) {
-        printf("%f ", vector->values[i]);
+        printf("%f ", vec[i]);
     }
     printf("\n");
 }
 
-void ml_print_vec3(vec3_t *vector)
+void ml_print_vec3(float vec[3])
 {
     for (int i = 0; i < 3; i++) {
-        printf("%f ", vector->values[i]);
+        printf("%f ", vec[i]);
     }
     printf("\n");
 }
 
-void ml_print_vec4(vec4_t *vector)
+void ml_print_vec4(float vec[4])
 {
     for (int i = 0; i < 4; i++) {
-        printf("%f ", vector->values[i]);
+        printf("%f ", vec[i]);
     }
     printf("\n");
 }
