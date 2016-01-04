@@ -146,37 +146,53 @@ void gl_draw(size_t array_size)
 
 void gl_draw_elements(size_t num_elements)
 {
-    float  vertex4[4];
-    float  vertex3[3];
+    float  vertex4_a[4];
+    float  vertex4_b[4];
+    float  vertex4_c[4];
+    float  vertex3_a[3];
+    float  vertex3_b[3];
+    float  vertex3_c[3];
     size_t index;
-    size_t num_floats = num_elements * 3;
 
-    TEMP_VERTICES = (float *)realloc(TEMP_VERTICES, num_floats * 3 * sizeof(float));
+    for (size_t i = 0; i < num_elements - 1; i += 3) { // Draw 1 face per loop.
+        index = (INDEX_ARRAY[i] - 1) * 3; // OBJs use 1-indexing.
+        vertex4_a[0] = VERTEX_ARRAY[index];
+        vertex4_a[1] = VERTEX_ARRAY[index + 1];
+        vertex4_a[2] = VERTEX_ARRAY[index + 2];
+        vertex4_a[3] = 1;
 
-    for (size_t i = 0; i < num_elements; i++) {
-        index = INDEX_ARRAY[i] - 1; // Right now the indices start at 1.
-        vertex4[0] = VERTEX_ARRAY[index * 3];
-        vertex4[1] = VERTEX_ARRAY[index * 3 + 1];
-        vertex4[2] = VERTEX_ARRAY[index * 3 + 2];
-        vertex4[3] = 1;
+        index = (INDEX_ARRAY[i + 1] - 1) * 3; // OBJs use 1-indexing.
+        vertex4_b[0] = VERTEX_ARRAY[index];
+        vertex4_b[1] = VERTEX_ARRAY[index + 1];
+        vertex4_b[2] = VERTEX_ARRAY[index + 2];
+        vertex4_b[3] = 1;
 
-        ml_multiply_mat4_vec4(MV_MATRIX, vertex4, vertex4);
-        // printf("Before projection:"); ml_print_vec4(vertex4);
-        // printf("P_MATRIX\n"); ml_print_mat4(P_MATRIX);
-        ml_multiply_mat4_vec4(P_MATRIX, vertex4, vertex4);
-        gl_perspective_devision(vertex4, vertex3);
-        // printf("After projection:"); ml_print_vec3(vertex3);
-        vertex3[2] = 1;
-        ml_multiply_mat3_vec3(V_MATRIX, vertex3, vertex3);
-        // printf("Screen coords:"); ml_print_vec3(vertex3);
-        // sleep(1);
+        index = (INDEX_ARRAY[i + 2] - 1) * 3; // OBJs use 1-indexing.
+        vertex4_c[0] = VERTEX_ARRAY[index];
+        vertex4_c[1] = VERTEX_ARRAY[index + 1];
+        vertex4_c[2] = VERTEX_ARRAY[index + 2];
+        vertex4_c[3] = 1;
 
-        TEMP_VERTICES[i * 3]     = vertex3[0];
-        TEMP_VERTICES[i * 3 + 1] = vertex3[1];
-        TEMP_VERTICES[i * 3 + 2] = vertex3[2];
+        ml_multiply_mat4_vec4(MV_MATRIX, vertex4_a, vertex4_a);
+        ml_multiply_mat4_vec4(MV_MATRIX, vertex4_b, vertex4_b);
+        ml_multiply_mat4_vec4(MV_MATRIX, vertex4_c, vertex4_c);
+        ml_multiply_mat4_vec4(P_MATRIX, vertex4_a, vertex4_a);
+        ml_multiply_mat4_vec4(P_MATRIX, vertex4_b, vertex4_b);
+        ml_multiply_mat4_vec4(P_MATRIX, vertex4_c, vertex4_c);
+        gl_perspective_devision(vertex4_a, vertex3_a);
+        gl_perspective_devision(vertex4_b, vertex3_b);
+        gl_perspective_devision(vertex4_c, vertex3_c);
+        vertex3_a[2] = 1; // Temp fix.
+        vertex3_b[2] = 1;
+        vertex3_c[2] = 1;
+        ml_multiply_mat3_vec3(V_MATRIX, vertex3_a, vertex3_a);
+        ml_multiply_mat3_vec3(V_MATRIX, vertex3_b, vertex3_b);
+        ml_multiply_mat3_vec3(V_MATRIX, vertex3_c, vertex3_c);
+
+        gl_draw_line(vertex3_a[0], vertex3_a[1], vertex3_b[0], vertex3_b[1]);
+        gl_draw_line(vertex3_b[0], vertex3_b[1], vertex3_c[0], vertex3_c[1]);
+        gl_draw_line(vertex3_a[0], vertex3_a[1], vertex3_c[0], vertex3_c[1]);
     }
-
-    gl_draw_lines(num_floats);
 
     render(frame_buffer.buffer, frame_buffer.size);
     fbuff_clear(&frame_buffer);
