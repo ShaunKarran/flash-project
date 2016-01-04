@@ -1,7 +1,7 @@
 
 #include "obj.h"
 
-const struct OBJ_t cube = {
+struct OBJ_t cube = {
     /* num_vertices       */ 8,
     /* vertices           */ { 1.0f, -1.0f, -1.0f, 1.0f, -1.0f, 1.0f, -1.0f, -1.0f, 1.0f, -1.0f, -1.0f, -1.0f, 1.0f, 1.0f, -1.0f, 1.0f, 1.0f, 1.0f, -1.0f, 1.0f, 1.0f, -1.0f, 1.0f, -1.0f },
     /* num_vertex_indices */ 36,

@@ -28,16 +28,16 @@ void gl_perspective(float left, float right, float bottom, float top, float near
 
 void gl_perspective_fov(float fov_y, float aspect_ratio, float near, float far);
 
-void gl_bind_vertex_array(vec3_t *vertex_array);
+void gl_bind_vertex_array(float vertex_array[]);
 
-void gl_bind_mvmatrix(mat4_t *mv_matrix);
+void gl_bind_mvmatrix(float mv_matrix[][4]);
 
-void gl_draw(size_t num_verticies);
+void gl_draw(size_t array_size);
 
-static void gl_draw_lines(size_t num_verticies);
+static void gl_draw_lines(size_t array_size);
 
 static void gl_draw_line(float x1f, float y1f, float x2f, float y2f);
 
-static vec3_t gl_perspective_devision(vec4_t *vertex);
+static void gl_perspective_devision(float vertex[4], float out[3]);
 
 #endif /* _GL_H_ */

@@ -12,8 +12,8 @@
 #define NUM_VERTICES 5
 
 int main(void) {
-    vec2_t vertex_array[NUM_VERTICES];
-    mat3_t mv_matrix;
+    float vertex_array[NUM_VERTICES * 3];
+    float mv_matrix;
 
     cpu_set_speed(CPU_32MHz);
 
@@ -37,7 +37,7 @@ int main(void) {
     gpio_set_output(led0);
 
     gl_init(ST7565R_WIDTH, ST7565R_HEIGHT, st7565r_write_array);
-    gl_orthographic(0, ST7565R_WIDTH - 1, ST7565R_HEIGHT - 1, 0);
+    gl_orthographic(0, ST7565R_WIDTH - 1, ST7565R_HEIGHT - 1, 0, 10, 100);
 
     /* Defines the verticies to draw. */
     vertex_array[0].values[0] =  0;
