@@ -1,5 +1,5 @@
 
-#include "obj.h"
+#include "obj_type.h"
 
 struct OBJ_t cube = {
     /* num_vertices       */ 8,

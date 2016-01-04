@@ -4,25 +4,23 @@
 void ml_mat2_identity(float mat[][2])
 {
     memset(mat, 0, 4 * sizeof(float));
-    mat[0][0] = 1;
-    mat[1][1] = 1;
+    mat[0][0] = 1; mat[1][1] = 1;
 }
 
 void ml_mat3_identity(float mat[][3])
 {
     memset(mat, 0, 9 * sizeof(float));
-    mat[0][0] = 1;
-    mat[1][1] = 1;
-    mat[2][2] = 1;
+    mat[0][0] = 1; mat[1][1] = 1; mat[2][2] = 1;
 }
 
 void ml_mat4_identity(float mat[][4])
 {
     memset(mat, 0, 16 * sizeof(float));
-    mat[0][0] = 1;
-    mat[1][1] = 1;
-    mat[2][2] = 1;
-    mat[3][3] = 1;
+    mat[0][0] = 1; mat[1][1] = 1; mat[2][2] = 1; mat[3][3] = 1;
+    // mat[0][0] = 1; mat[0][1] = 0; mat[0][2] = 0; mat[0][3] = 0;
+    // mat[1][0] = 0; mat[1][1] = 1; mat[1][2] = 0; mat[1][3] = 0;
+    // mat[2][0] = 0; mat[2][1] = 0; mat[2][2] = 1; mat[2][3] = 0;
+    // mat[3][0] = 0; mat[3][1] = 0; mat[3][2] = 0; mat[3][3] = 1;
 }
 
 void ml_multiply_mat2_mat2(float mat_a[][2], float mat_b[][2], float out[][2])
