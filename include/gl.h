@@ -28,9 +28,13 @@ void gl_perspective(float left, float right, float bottom, float top, float near
 
 void gl_perspective_fov(float fov_y, float aspect_ratio, float near, float far);
 
-void gl_bind_vertex_array(float array[]);
+void gl_bind_vert_array(float array[]);
 
-void gl_bind_index_array(int array[]);
+void gl_bind_vert_index_array(int array[]);
+
+void gl_bind_norm_array(float array[]);
+
+void gl_bind_norm_index_array(int array[]);
 
 void gl_bind_mvmatrix(float mv_matrix[][4]);
 
