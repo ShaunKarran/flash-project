@@ -1,3 +1,3 @@
 
 all:
-	gcc -std=gnu99 ./test/test.c ./src/ml.c -I./include -o ./test/test
+	gcc -std=gnu99 ./test/test.c ./src/ml.c -I./include -o ./bin/test
