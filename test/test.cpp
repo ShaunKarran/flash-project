@@ -5,7 +5,7 @@
 #include <sstream>
 #include <vector>
 
-#include "obj_parser.h"
+#include "obj.h"
 
 int main(int argc, char *argv[])
 {

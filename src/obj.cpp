@@ -1,5 +1,5 @@
 
-#include "obj_parser.h"
+#include "obj.h"
 
 void obj_parse(std::ifstream *obj_file, struct OBJ_t *obj)
 {
@@ -68,5 +68,5 @@ void obj_parse(std::ifstream *obj_file, struct OBJ_t *obj)
 
 void obj_write_header(std::ofstream *header_file, struct OBJ_t *obj)
 {
-    
+
 }
