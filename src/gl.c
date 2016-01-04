@@ -18,6 +18,7 @@ static void (*render)(unsigned char *, size_t);
 
 static float *VERTEX_ARRAY;      /* Points to users array of vertices. */
 static float *TEMP_VERTICES;     /* To store transformed vertices while drawing. */
+static int   *INDEX_ARRAY;
 static float MV_MATRIX[4][4];    /* Model-View matrix. To transform to eye coordinates. */
 static float P_MATRIX[4][4];     /* Projection matrix. To transform to clip coordinates. */
 static float V_MATRIX[3][3];     /* View matrix. To transform to screen coordinates. */
@@ -89,9 +90,14 @@ void gl_perspective_fov(float fov_y, float aspect_ratio, float near, float far)
     P_MATRIX[3][2] = -1;
 }
 
-void gl_bind_vertex_array(float vertex_array[])
+void gl_bind_vertex_array(float array[])
 {
-    VERTEX_ARRAY = vertex_array;
+    VERTEX_ARRAY = array;
+}
+
+void gl_bind_index_array(int array[])
+{
+    INDEX_ARRAY = array;
 }
 
 void gl_bind_mvmatrix(float mv_matrix[][4])
@@ -138,6 +144,44 @@ void gl_draw(size_t array_size)
     fbuff_clear(&frame_buffer);
 }
 
+void gl_draw_elements(size_t num_elements)
+{
+    float  vertex4[4];
+    float  vertex3[3];
+    size_t index;
+    size_t num_floats = num_elements * 3;
+
+    TEMP_VERTICES = (float *)realloc(TEMP_VERTICES, num_floats * 3 * sizeof(float));
+
+    for (size_t i = 0; i < num_elements; i++) {
+        index = INDEX_ARRAY[i] - 1; // Right now the indices start at 1.
+        vertex4[0] = VERTEX_ARRAY[index * 3];
+        vertex4[1] = VERTEX_ARRAY[index * 3 + 1];
+        vertex4[2] = VERTEX_ARRAY[index * 3 + 2];
+        vertex4[3] = 1;
+
+        ml_multiply_mat4_vec4(MV_MATRIX, vertex4, vertex4);
+        // printf("Before projection:"); ml_print_vec4(vertex4);
+        // printf("P_MATRIX\n"); ml_print_mat4(P_MATRIX);
+        ml_multiply_mat4_vec4(P_MATRIX, vertex4, vertex4);
+        gl_perspective_devision(vertex4, vertex3);
+        // printf("After projection:"); ml_print_vec3(vertex3);
+        vertex3[2] = 1;
+        ml_multiply_mat3_vec3(V_MATRIX, vertex3, vertex3);
+        // printf("Screen coords:"); ml_print_vec3(vertex3);
+        // sleep(1);
+
+        TEMP_VERTICES[i * 3]     = vertex3[0];
+        TEMP_VERTICES[i * 3 + 1] = vertex3[1];
+        TEMP_VERTICES[i * 3 + 2] = vertex3[2];
+    }
+
+    gl_draw_lines(num_floats);
+
+    render(frame_buffer.buffer, frame_buffer.size);
+    fbuff_clear(&frame_buffer);
+}
+
 static void gl_draw_lines(size_t array_size)
 {
     for (size_t i = 0; i < array_size - 5; i += 3) {
@@ -148,7 +192,6 @@ static void gl_draw_lines(size_t array_size)
     }
 }
 
-/* NOTE: These should be vec2_t. This is a temporary solution. */
 static void gl_draw_line(float x1f, float y1f, float x2f, float y2f)
 {
     int x1 = (int)roundf(x1f);
