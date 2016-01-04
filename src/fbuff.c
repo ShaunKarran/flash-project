@@ -17,7 +17,7 @@ void fbuff_init(struct FBUFF_Buffer_t *frame_buffer, size_t width, size_t height
     frame_buffer->height = height;
     frame_buffer->size = width * height / 8;
 
-    frame_buffer->buffer = calloc(frame_buffer->size, sizeof(unsigned char));
+    frame_buffer->buffer = (unsigned char *)calloc(frame_buffer->size, sizeof(unsigned char));
 }
 
 void fbuff_clear(struct FBUFF_Buffer_t *frame_buffer)

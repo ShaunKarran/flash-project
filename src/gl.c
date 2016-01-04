@@ -104,7 +104,7 @@ void gl_draw(size_t num_verticies)
     vec4_t vertex4;
     vec3_t vertex3;
 
-    TEMP_VERTICES = realloc(TEMP_VERTICES, num_verticies * sizeof(vec3_t));
+    TEMP_VERTICES = (vec3_t *)realloc(TEMP_VERTICES, num_verticies * sizeof(vec3_t));
 
     for (size_t i = 0; i < num_verticies; i++) {
         vertex4.values[0] = VERTEX_ARRAY[i].values[0];
@@ -163,7 +163,7 @@ static void gl_draw_line(float x1f, float y1f, float x2f, float y2f)
 	while (1) {
 		fbuff_set_pixel(x1, y1, &frame_buffer);
 
-		if ((x1 == x2) || (y1 == y2)) {
+		if ((x1 == x2) && (y1 == y2)) {
 			break;
 		}
 
