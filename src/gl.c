@@ -63,21 +63,6 @@ void gl_orthographic(float left, float right, float bottom, float top, float nea
 
 }
 
-// void gl_perspective(float fov_y, float aspect_ratio, float near, float far)
-// {
-//     float f;
-//
-//     fov_y = fov_y * M_PI / 180.0; /* Convert from degrees to radians. */
-//     f = 1 / tan(fov_y / 2);
-//     ml_mat4_identity(&P_MATRIX);
-//
-//     P_MATRIX.values[0][0] = f / aspect_ratio;
-//     P_MATRIX.values[1][1] = f;
-//     P_MATRIX.values[2][2] = (near + far) / (near - far);
-//     P_MATRIX.values[2][3] = (2 * near * far) / (near - far);
-//     P_MATRIX.values[3][2] = -1;
-// }
-
 void gl_perspective(float left, float right, float bottom, float top, float near, float far)
 {
     ml_mat4_identity(&P_MATRIX);
@@ -85,7 +70,22 @@ void gl_perspective(float left, float right, float bottom, float top, float near
     P_MATRIX.values[0][0] = near / right;
     P_MATRIX.values[1][1] = near / top;
     P_MATRIX.values[2][2] = -(far + near) / (far - near);
-    P_MATRIX.values[2][3] = (-2 * far * near) / (far - near);
+    P_MATRIX.values[2][3] = -(2 * far * near) / (far - near);
+    P_MATRIX.values[3][2] = -1;
+}
+
+void gl_perspective_fov(float fov_y, float aspect_ratio, float near, float far)
+{
+    float f;
+
+    fov_y = fov_y * M_PI / 180.0; /* Convert from degrees to radians. */
+    f = 1 / tan(fov_y / 2);
+    ml_mat4_identity(&P_MATRIX);
+
+    P_MATRIX.values[0][0] = f / aspect_ratio;
+    P_MATRIX.values[1][1] = f;
+    P_MATRIX.values[2][2] = -(far + near) / (far - near);
+    P_MATRIX.values[2][3] = -(2 * far * near) / (far - near);
     P_MATRIX.values[3][2] = -1;
 }
 
@@ -163,7 +163,7 @@ static void gl_draw_line(float x1f, float y1f, float x2f, float y2f)
 	while (1) {
 		fbuff_set_pixel(x1, y1, &frame_buffer);
 
-		if ((x1 == x2) && (y1 == y2)) {
+		if ((x1 == x2) || (y1 == y2)) {
 			break;
 		}
 

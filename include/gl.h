@@ -24,8 +24,9 @@ void gl_viewport(int x, int y, int width, int height);
 
 void gl_orthographic(float left, float right, float bottom, float top, float near, float far);
 
-// void gl_perspective(float fov_y, float aspect_ratio, float near, float far);
 void gl_perspective(float left, float right, float bottom, float top, float near, float far);
+
+void gl_perspective_fov(float fov_y, float aspect_ratio, float near, float far);
 
 void gl_bind_vertex_array(vec3_t *vertex_array);
 
