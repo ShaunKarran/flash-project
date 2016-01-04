@@ -110,7 +110,7 @@ void gl_draw(size_t array_size)
 
     TEMP_VERTICES = (float *)realloc(TEMP_VERTICES, array_size * sizeof(float));
 
-    for (size_t i = 0; i < array_size - 3; i += 3) {
+    for (size_t i = 0; i < array_size - 2; i += 3) {
         vertex4[0] = VERTEX_ARRAY[i];
         vertex4[1] = VERTEX_ARRAY[i + 1];
         vertex4[2] = VERTEX_ARRAY[i + 2];
@@ -140,7 +140,7 @@ void gl_draw(size_t array_size)
 
 static void gl_draw_lines(size_t array_size)
 {
-    for (size_t i = 0; i < array_size - 6; i += 6) {
+    for (size_t i = 0; i < array_size - 5; i += 3) {
         gl_draw_line(TEMP_VERTICES[i],
                      TEMP_VERTICES[i + 1],
                      TEMP_VERTICES[i + 3],
