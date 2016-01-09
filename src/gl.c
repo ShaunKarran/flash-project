@@ -11,13 +11,10 @@
 
 #include "gl.h"
 
-// #include <unistd.h> /* For sleep() for testing. */
-
 static struct FBUFF_Buffer_t frame_buffer;
 static void (*render)(uint8_t *, size_t);
 
-static float *VERT_ARRAY;           /* Points to users array of vertices. */
-// static float *TEMP_VERTICES;     /* To store transformed vertices while drawing. */
+static float    *VERT_ARRAY;           /* Points to users array of vertices. */
 static uint16_t *VERT_INDEX_ARRAY;
 static float    *NORM_ARRAY;
 static uint16_t *NORM_INDEX_ARRAY;
@@ -105,11 +102,6 @@ void gl_bind_norm_index_array(uint16_t array[])
 void gl_bind_mvmatrix(float mv_matrix[][4])
 {
     MV_MATRIX = mv_matrix;
-    // for (size_t m = 0; m < 4; m++) {
-    //     for (size_t n = 0; n < 4; n++) {
-    //         MV_MATRIX[m][n] = mv_matrix[m][n];
-    //     }
-    // }
 }
 
 // void gl_draw(size_t array_size)
@@ -211,7 +203,7 @@ void gl_draw_elements(size_t num_elements)
 //     }
 // }
 
-static void gl_draw_line(float x1f, float y1f, float x2f, float y2f)
+void gl_draw_line(float x1f, float y1f, float x2f, float y2f)
 {
     int16_t x1 = (int16_t)roundf(x1f);
     int16_t y1 = (int16_t)roundf(y1f);
@@ -247,7 +239,7 @@ static void gl_draw_line(float x1f, float y1f, float x2f, float y2f)
 	}
 }
 
-static void gl_perspective_devision(float vertex[4], float out[3])
+void gl_perspective_devision(float vertex[4], float out[3])
 {
     out[0] = vertex[0] / vertex[3];
     out[1] = vertex[1] / vertex[3];

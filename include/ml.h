@@ -1,6 +1,5 @@
 
-#ifndef _ML_H_
-#define _ML_H_
+#pragma once
 
 #include <math.h>
 #include <stdio.h>
@@ -30,6 +29,4 @@ void ml_print_vec2(float vec[2]);
 void ml_print_vec3(float vec[3]);
 void ml_print_vec4(float vec[4]);
 
-static float deg_to_rad(float degrees);
-
-#endif /* _ML_H_ */
+float deg_to_rad(float degrees);

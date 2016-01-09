@@ -7,15 +7,10 @@
  *	Created:		November 2015
 */
 
-#ifndef _GL_H_
-#define _GL_H_
+#pragma once
 
-#include <math.h>
-#include <stdbool.h>
 #include <stdint.h>
-#include <stdlib.h>
 
-#include "bitwise.h"
 #include "fbuff.h"
 #include "ml.h"
 
@@ -45,8 +40,6 @@ void gl_draw_elements(size_t num_elements);
 
 // static void gl_draw_lines(size_t array_size);
 
-static void gl_draw_line(float x1f, float y1f, float x2f, float y2f);
+void gl_draw_line(float x1f, float y1f, float x2f, float y2f);
 
-static void gl_perspective_devision(float vertex[4], float out[3]);
-
-#endif /* _GL_H_ */
+void gl_perspective_devision(float vertex[4], float out[3]);

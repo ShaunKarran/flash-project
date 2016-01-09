@@ -212,7 +212,7 @@ void ml_print_vec4(float vec[4])
     printf("\n");
 }
 
-static float deg_to_rad(float degrees)
+float deg_to_rad(float degrees)
 {
     return degrees * M_PI / 180.0;
 }
