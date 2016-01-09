@@ -56,13 +56,15 @@ bool fbuff_clr_pixel(uint16_t x, uint16_t y, struct FBUFF_Buffer_t *frame_buffer
     /* Position is outside of the buffer. */
     if (x < 0 || x >= frame_buffer->width ||
         y < 0 || y >= frame_buffer->height) {
-        return;
+        return false;
     }
 
     size_t byte = y / 8 * frame_buffer->width + x;
     char bit = y % 8;
 
     clr_bit(frame_buffer->data[byte], bit);
+
+    return true;
 }
 
 // Not currently working.
