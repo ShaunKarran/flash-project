@@ -16,12 +16,12 @@
 static struct FBUFF_Buffer_t frame_buffer;
 static void (*render)(uint8_t *, size_t);
 
-static float *VERT_ARRAY;      /* Points to users array of vertices. */
+static float *VERT_ARRAY;           /* Points to users array of vertices. */
 // static float *TEMP_VERTICES;     /* To store transformed vertices while drawing. */
 static uint16_t *VERT_INDEX_ARRAY;
 static float    *NORM_ARRAY;
 static uint16_t *NORM_INDEX_ARRAY;
-static float    MV_MATRIX[4][4];    /* Model-View matrix. To transform to eye coordinates. */
+static float    (*MV_MATRIX)[4];    /* Model-View matrix. To transform to eye coordinates. */
 static float    P_MATRIX[4][4];     /* Projection matrix. To transform to clip coordinates. */
 static float    V_MATRIX[3][3];     /* View matrix. To transform to screen coordinates. */
 
@@ -104,11 +104,12 @@ void gl_bind_norm_index_array(uint16_t array[])
 
 void gl_bind_mvmatrix(float mv_matrix[][4])
 {
-    for (size_t m = 0; m < 4; m++) {
-        for (size_t n = 0; n < 4; n++) {
-            MV_MATRIX[m][n] = mv_matrix[m][n];
-        }
-    }
+    MV_MATRIX = mv_matrix;
+    // for (size_t m = 0; m < 4; m++) {
+    //     for (size_t n = 0; n < 4; n++) {
+    //         MV_MATRIX[m][n] = mv_matrix[m][n];
+    //     }
+    // }
 }
 
 // void gl_draw(size_t array_size)
