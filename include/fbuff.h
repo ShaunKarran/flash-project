@@ -7,32 +7,30 @@
  *	Created:		November 2015
 */
 
-#ifndef _FBUFF_H_
-#define _FBUFF_H_
+#pragma once
 
 #include <stdbool.h>
 #include <stdlib.h>
+#include <stdint.h>
 #include <string.h>
 
 #include "bitwise.h"
 
 struct FBUFF_Buffer_t {
-    size_t width;
-    size_t height;
+    uint16_t width;
+    uint16_t height;
     size_t size;
-    unsigned char *buffer;
+    uint8_t *data;
 };
 
-void fbuff_init(struct FBUFF_Buffer_t *frame_buffer, size_t width, size_t height);
+bool fbuff_init(struct FBUFF_Buffer_t *frame_buffer, uint16_t width, uint16_t height);
 
 void fbuff_clear(struct FBUFF_Buffer_t *frame_buffer);
 
 void fbuff_fill(struct FBUFF_Buffer_t *frame_buffer);
 
-void fbuff_set_pixel(int x, int y, struct FBUFF_Buffer_t *frame_buffer);
+bool fbuff_set_pixel(uint16_t x, uint16_t y, struct FBUFF_Buffer_t *frame_buffer);
 
-void fbuff_clr_pixel(int x, int y, struct FBUFF_Buffer_t *frame_buffer);
+bool fbuff_clr_pixel(uint16_t x, uint16_t y, struct FBUFF_Buffer_t *frame_buffer);
 
-void fbuff_fill_faces(struct FBUFF_Buffer_t *frame_buffer);
-
-#endif /* _FBUFF_H_ */
+// void fbuff_fill_faces(struct FBUFF_Buffer_t *frame_buffer);
