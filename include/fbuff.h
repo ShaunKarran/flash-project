@@ -20,7 +20,7 @@ struct FBUFF_Buffer_t {
     uint16_t width;
     uint16_t height;
     size_t size;
-    uint8_t *buffer;
+    uint8_t *data;
 };
 
 bool fbuff_init(struct FBUFF_Buffer_t *frame_buffer, uint16_t width, uint16_t height);

@@ -17,8 +17,8 @@ bool fbuff_init(struct FBUFF_Buffer_t *frame_buffer, uint16_t width, uint16_t he
     frame_buffer->height = height;
     frame_buffer->size = width * height / 8;
 
-    frame_buffer->buffer = calloc(frame_buffer->size, sizeof(unsigned char));
-    if (frame_buffer->buffer == NULL) {
+    frame_buffer->data = calloc(frame_buffer->size, sizeof(unsigned char));
+    if (frame_buffer->data == NULL) {
         return false;
     } else {
         return true;
@@ -27,12 +27,12 @@ bool fbuff_init(struct FBUFF_Buffer_t *frame_buffer, uint16_t width, uint16_t he
 
 void fbuff_clear(struct FBUFF_Buffer_t *frame_buffer)
 {
-    memset(frame_buffer->buffer, 0x00, frame_buffer->size);
+    memset(frame_buffer->data, 0x00, frame_buffer->size);
 }
 
 void fbuff_fill(struct FBUFF_Buffer_t *frame_buffer)
 {
-    memset(frame_buffer->buffer, 0xFF, frame_buffer->size);
+    memset(frame_buffer->data, 0xFF, frame_buffer->size);
 }
 
 bool fbuff_set_pixel(uint16_t x, uint16_t y, struct FBUFF_Buffer_t *frame_buffer)
@@ -46,7 +46,7 @@ bool fbuff_set_pixel(uint16_t x, uint16_t y, struct FBUFF_Buffer_t *frame_buffer
     size_t byte = y / 8 * frame_buffer->width + x;
     uint8_t bit = y % 8;
 
-    set_bit(frame_buffer->buffer[byte], bit);
+    set_bit(frame_buffer->data[byte], bit);
 
     return true;
 }
@@ -62,7 +62,7 @@ bool fbuff_clr_pixel(uint16_t x, uint16_t y, struct FBUFF_Buffer_t *frame_buffer
     size_t byte = y / 8 * frame_buffer->width + x;
     char bit = y % 8;
 
-    clr_bit(frame_buffer->buffer[byte], bit);
+    clr_bit(frame_buffer->data[byte], bit);
 }
 
 // Not currently working.
@@ -80,7 +80,7 @@ bool fbuff_clr_pixel(uint16_t x, uint16_t y, struct FBUFF_Buffer_t *frame_buffer
 //             buffer_position = y / 8 * frame_buffer->width + x;
 //
 //             previous_pixel = this_pixel;
-//             this_pixel = get_bit(frame_buffer->buffer[buffer_position], y % 8);
+//             this_pixel = get_bit(frame_buffer->data[buffer_position], y % 8);
 //
 //             if (previous_pixel && !this_pixel) {
 //                 inside = !inside;
@@ -89,7 +89,7 @@ bool fbuff_clr_pixel(uint16_t x, uint16_t y, struct FBUFF_Buffer_t *frame_buffer
 //             }
 //
 //             if (inside) {
-//                 set_bit(frame_buffer->buffer[buffer_position], y % 8);
+//                 set_bit(frame_buffer->data[buffer_position], y % 8);
 //             }
 //         }
 //     }
