@@ -3,12 +3,11 @@
 #define _ST7565R_H_
 
 #include <avr/io.h>
-#include <stdbool.h>
+#include <stdint.h>
 #include <stdlib.h>
 #include <util/delay.h>
 
 #include "bitbang_spi.h"
-#include "bitwise.h"
 #include "gpio.h"
 
 /* Display pixel dimensions. */

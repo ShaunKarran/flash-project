@@ -11,7 +11,7 @@
 
 #include "gl.h"
 
-static struct FBUFF_Buffer_t frame_buffer;
+static struct FBUFF_Buffer_t *frame_buffer;
 static void (*render)(uint8_t *, size_t);
 
 static float    *VERT_ARRAY;           /* Points to users array of vertices. */
@@ -22,12 +22,10 @@ static float    (*MV_MATRIX)[4];    /* Model-View matrix. To transform to eye co
 static float    P_MATRIX[4][4];     /* Projection matrix. To transform to clip coordinates. */
 static float    V_MATRIX[3][3];     /* View matrix. To transform to screen coordinates. */
 
-void gl_init(uint16_t width, uint16_t height, void (*render_function)(unsigned char *, size_t))
+void gl_init(struct FBUFF_Buffer_t *buffer, void (*render_function)(unsigned char *, size_t))
 {
-    fbuff_init(&frame_buffer, width, height);
+    frame_buffer = buffer;
     render = render_function;
-
-    gl_viewport(0, 0, width, height);
 }
 
 void gl_viewport(uint16_t x, uint16_t y, uint16_t width, uint16_t height)
@@ -135,8 +133,8 @@ void gl_bind_mvmatrix(float mv_matrix[][4])
 //
 //     gl_draw_lines(array_size);
 //
-//     render(frame_buffer.buffer, frame_buffer.size);
-//     fbuff_clear(&frame_buffer);
+//     render(frame_buffer->buffer, frame_buffer->size);
+//     fbuff_clear(frame_buffer);
 // }
 
 void gl_draw_elements(size_t num_elements)
@@ -189,8 +187,8 @@ void gl_draw_elements(size_t num_elements)
         gl_draw_line(vertex3_a[0], vertex3_a[1], vertex3_c[0], vertex3_c[1]);
     }
 
-    render(frame_buffer.data, frame_buffer.size);
-    fbuff_clear(&frame_buffer);
+    render(frame_buffer->data, frame_buffer->size);
+    fbuff_clear(frame_buffer);
 }
 
 // static void gl_draw_lines(size_t array_size)
@@ -219,7 +217,7 @@ void gl_draw_line(float x1f, float y1f, float x2f, float y2f)
 	int8_t shift_y = (y1 < y2) ? 1 : -1;
 
 	while (1) {
-		fbuff_set_pixel(x1, y1, &frame_buffer);
+		fbuff_set_pixel(x1, y1, frame_buffer);
 
 		if ((x1 == x2) && (y1 == y2)) {
 			break;
