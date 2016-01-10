@@ -23,14 +23,14 @@ void ml_mat4_identity(float mat[][4])
     // mat[3][0] = 0; mat[3][1] = 0; mat[3][2] = 0; mat[3][3] = 1;
 }
 
-void ml_multiply_mat2_mat2(float mat_a[][2], float mat_b[][2], float out[][2])
+void ml_multiply_mat2_mat2(float a[][2], float b[][2], float out[][2])
 {
     float temp[2][2];
 
-    temp[0][0] = mat_a[0][0] * mat_b[0][0] + mat_a[0][1] * mat_b[1][0];
-    temp[0][1] = mat_a[0][0] * mat_b[0][1] + mat_a[0][1] * mat_b[1][1];
-    temp[1][0] = mat_a[1][0] * mat_b[0][0] + mat_a[1][1] * mat_b[1][0];
-    temp[1][1] = mat_a[1][0] * mat_b[0][1] + mat_a[1][1] * mat_b[1][1];
+    temp[0][0] = a[0][0] * b[0][0] + a[0][1] * b[1][0];
+    temp[0][1] = a[0][0] * b[0][1] + a[0][1] * b[1][1];
+    temp[1][0] = a[1][0] * b[0][0] + a[1][1] * b[1][0];
+    temp[1][1] = a[1][0] * b[0][1] + a[1][1] * b[1][1];
 
     out[0][0] = temp[0][0];
     out[0][1] = temp[0][1];
@@ -38,19 +38,19 @@ void ml_multiply_mat2_mat2(float mat_a[][2], float mat_b[][2], float out[][2])
     out[1][1] = temp[1][1];
 }
 
-void ml_multiply_mat3_mat3(float mat_a[][3], float mat_b[][3], float out[][3])
+void ml_multiply_mat3_mat3(float a[][3], float b[][3], float out[][3])
 {
     float temp[3][3];
 
-    temp[0][0] = mat_a[0][0] * mat_b[0][0] + mat_a[0][1] * mat_b[1][0] + mat_a[0][2] * mat_b[2][0];
-    temp[0][1] = mat_a[0][0] * mat_b[0][1] + mat_a[0][1] * mat_b[1][1] + mat_a[0][2] * mat_b[2][1];
-    temp[0][2] = mat_a[0][0] * mat_b[0][2] + mat_a[0][1] * mat_b[1][2] + mat_a[0][2] * mat_b[2][2];
-    temp[1][0] = mat_a[1][0] * mat_b[0][0] + mat_a[1][1] * mat_b[1][0] + mat_a[1][2] * mat_b[2][0];
-    temp[1][1] = mat_a[1][0] * mat_b[0][1] + mat_a[1][1] * mat_b[1][1] + mat_a[1][2] * mat_b[2][1];
-    temp[1][2] = mat_a[1][0] * mat_b[0][2] + mat_a[1][1] * mat_b[1][2] + mat_a[1][2] * mat_b[2][2];
-    temp[2][0] = mat_a[2][0] * mat_b[0][0] + mat_a[2][1] * mat_b[1][0] + mat_a[2][2] * mat_b[2][0];
-    temp[2][1] = mat_a[2][0] * mat_b[0][1] + mat_a[2][1] * mat_b[1][1] + mat_a[2][2] * mat_b[2][1];
-    temp[2][2] = mat_a[2][0] * mat_b[0][2] + mat_a[2][1] * mat_b[1][2] + mat_a[2][2] * mat_b[2][2];
+    temp[0][0] = a[0][0] * b[0][0] + a[0][1] * b[1][0] + a[0][2] * b[2][0];
+    temp[0][1] = a[0][0] * b[0][1] + a[0][1] * b[1][1] + a[0][2] * b[2][1];
+    temp[0][2] = a[0][0] * b[0][2] + a[0][1] * b[1][2] + a[0][2] * b[2][2];
+    temp[1][0] = a[1][0] * b[0][0] + a[1][1] * b[1][0] + a[1][2] * b[2][0];
+    temp[1][1] = a[1][0] * b[0][1] + a[1][1] * b[1][1] + a[1][2] * b[2][1];
+    temp[1][2] = a[1][0] * b[0][2] + a[1][1] * b[1][2] + a[1][2] * b[2][2];
+    temp[2][0] = a[2][0] * b[0][0] + a[2][1] * b[1][0] + a[2][2] * b[2][0];
+    temp[2][1] = a[2][0] * b[0][1] + a[2][1] * b[1][1] + a[2][2] * b[2][1];
+    temp[2][2] = a[2][0] * b[0][2] + a[2][1] * b[1][2] + a[2][2] * b[2][2];
 
     out[0][0] = temp[0][0];
     out[0][1] = temp[0][1];
@@ -63,26 +63,26 @@ void ml_multiply_mat3_mat3(float mat_a[][3], float mat_b[][3], float out[][3])
     out[2][2] = temp[2][2];
 }
 
-void ml_multiply_mat4_mat4(float mat_a[][4], float mat_b[][4], float out[][4])
+void ml_multiply_mat4_mat4(float a[][4], float b[][4], float out[][4])
 {
     float temp[4][4];
 
-    temp[0][0] = mat_a[0][0] * mat_b[0][0] + mat_a[0][1] * mat_b[1][0] + mat_a[0][2] * mat_b[2][0] + mat_a[0][3] * mat_b[3][0];
-    temp[0][1] = mat_a[0][0] * mat_b[0][1] + mat_a[0][1] * mat_b[1][1] + mat_a[0][2] * mat_b[2][1] + mat_a[0][3] * mat_b[3][1];
-    temp[0][2] = mat_a[0][0] * mat_b[0][2] + mat_a[0][1] * mat_b[1][2] + mat_a[0][2] * mat_b[2][2] + mat_a[0][3] * mat_b[3][2];
-    temp[0][3] = mat_a[0][0] * mat_b[0][3] + mat_a[0][1] * mat_b[1][3] + mat_a[0][2] * mat_b[2][3] + mat_a[0][3] * mat_b[3][3];
-    temp[1][0] = mat_a[1][0] * mat_b[0][0] + mat_a[1][1] * mat_b[1][0] + mat_a[1][2] * mat_b[2][0] + mat_a[1][3] * mat_b[3][0];
-    temp[1][1] = mat_a[1][0] * mat_b[0][1] + mat_a[1][1] * mat_b[1][1] + mat_a[1][2] * mat_b[2][1] + mat_a[1][3] * mat_b[3][1];
-    temp[1][2] = mat_a[1][0] * mat_b[0][2] + mat_a[1][1] * mat_b[1][2] + mat_a[1][2] * mat_b[2][2] + mat_a[1][3] * mat_b[3][2];
-    temp[1][3] = mat_a[1][0] * mat_b[0][3] + mat_a[1][1] * mat_b[1][3] + mat_a[1][2] * mat_b[2][3] + mat_a[1][3] * mat_b[3][3];
-    temp[2][0] = mat_a[2][0] * mat_b[0][0] + mat_a[2][1] * mat_b[1][0] + mat_a[2][2] * mat_b[2][0] + mat_a[2][3] * mat_b[3][0];
-    temp[2][1] = mat_a[2][0] * mat_b[0][1] + mat_a[2][1] * mat_b[1][1] + mat_a[2][2] * mat_b[2][1] + mat_a[2][3] * mat_b[3][1];
-    temp[2][2] = mat_a[2][0] * mat_b[0][2] + mat_a[2][1] * mat_b[1][2] + mat_a[2][2] * mat_b[2][2] + mat_a[2][3] * mat_b[3][2];
-    temp[2][3] = mat_a[2][0] * mat_b[0][3] + mat_a[2][1] * mat_b[1][3] + mat_a[2][2] * mat_b[2][3] + mat_a[2][3] * mat_b[3][3];
-    temp[3][0] = mat_a[3][0] * mat_b[0][0] + mat_a[3][1] * mat_b[1][0] + mat_a[3][2] * mat_b[2][0] + mat_a[3][3] * mat_b[3][0];
-    temp[3][1] = mat_a[3][0] * mat_b[0][1] + mat_a[3][1] * mat_b[1][1] + mat_a[3][2] * mat_b[2][1] + mat_a[3][3] * mat_b[3][1];
-    temp[3][2] = mat_a[3][0] * mat_b[0][2] + mat_a[3][1] * mat_b[1][2] + mat_a[3][2] * mat_b[2][2] + mat_a[3][3] * mat_b[3][2];
-    temp[3][3] = mat_a[3][0] * mat_b[0][3] + mat_a[3][1] * mat_b[1][3] + mat_a[3][2] * mat_b[2][3] + mat_a[3][3] * mat_b[3][3];
+    temp[0][0] = a[0][0] * b[0][0] + a[0][1] * b[1][0] + a[0][2] * b[2][0] + a[0][3] * b[3][0];
+    temp[0][1] = a[0][0] * b[0][1] + a[0][1] * b[1][1] + a[0][2] * b[2][1] + a[0][3] * b[3][1];
+    temp[0][2] = a[0][0] * b[0][2] + a[0][1] * b[1][2] + a[0][2] * b[2][2] + a[0][3] * b[3][2];
+    temp[0][3] = a[0][0] * b[0][3] + a[0][1] * b[1][3] + a[0][2] * b[2][3] + a[0][3] * b[3][3];
+    temp[1][0] = a[1][0] * b[0][0] + a[1][1] * b[1][0] + a[1][2] * b[2][0] + a[1][3] * b[3][0];
+    temp[1][1] = a[1][0] * b[0][1] + a[1][1] * b[1][1] + a[1][2] * b[2][1] + a[1][3] * b[3][1];
+    temp[1][2] = a[1][0] * b[0][2] + a[1][1] * b[1][2] + a[1][2] * b[2][2] + a[1][3] * b[3][2];
+    temp[1][3] = a[1][0] * b[0][3] + a[1][1] * b[1][3] + a[1][2] * b[2][3] + a[1][3] * b[3][3];
+    temp[2][0] = a[2][0] * b[0][0] + a[2][1] * b[1][0] + a[2][2] * b[2][0] + a[2][3] * b[3][0];
+    temp[2][1] = a[2][0] * b[0][1] + a[2][1] * b[1][1] + a[2][2] * b[2][1] + a[2][3] * b[3][1];
+    temp[2][2] = a[2][0] * b[0][2] + a[2][1] * b[1][2] + a[2][2] * b[2][2] + a[2][3] * b[3][2];
+    temp[2][3] = a[2][0] * b[0][3] + a[2][1] * b[1][3] + a[2][2] * b[2][3] + a[2][3] * b[3][3];
+    temp[3][0] = a[3][0] * b[0][0] + a[3][1] * b[1][0] + a[3][2] * b[2][0] + a[3][3] * b[3][0];
+    temp[3][1] = a[3][0] * b[0][1] + a[3][1] * b[1][1] + a[3][2] * b[2][1] + a[3][3] * b[3][1];
+    temp[3][2] = a[3][0] * b[0][2] + a[3][1] * b[1][2] + a[3][2] * b[2][2] + a[3][3] * b[3][2];
+    temp[3][3] = a[3][0] * b[0][3] + a[3][1] * b[1][3] + a[3][2] * b[2][3] + a[3][3] * b[3][3];
 
     out[0][0] = temp[0][0];
     out[0][1] = temp[0][1];
