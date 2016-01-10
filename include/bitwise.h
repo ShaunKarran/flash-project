@@ -6,14 +6,16 @@
  *	Created:		November 2015
 */
 
-#ifndef _bitwise_h_
-#define _bitwise_h_
+#pragma once
+
+#include <stdint.h>
 
 // Macros ----------------------------------------------------------------
 
-#define set_bit(reg, bit) (reg |= (1 << bit))
-#define clr_bit(reg, bit) (reg &= ~(1 << bit))
-#define tog_bit(reg, bit) (reg ^= (1 << bit))
-#define get_bit(reg, bit) (reg & (1 << bit))
+void set_bit(uint8_t *reg, uint8_t bit);
 
-#endif // _bitwise_h_
+void clr_bit(uint8_t *reg, uint8_t bit);
+
+void tog_bit(uint8_t *reg, uint8_t bit);
+
+uint8_t get_bit(uint8_t reg, uint8_t bit);

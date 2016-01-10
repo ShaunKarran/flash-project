@@ -1,6 +1,5 @@
 
-#ifndef _OBJ_H_
-#define _OBJ_H_
+#pragma once
 
 #include <cstdlib>
 #include <iostream>

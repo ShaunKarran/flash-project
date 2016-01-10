@@ -7,7 +7,7 @@ void usart_spi_init(USART_t *module)
     module->CTRLB = USART_TXEN_bm;
 }
 
-void usart_spi_write(USART_t *module, unsigned char data)
+void usart_spi_write(USART_t *module, uint8_t data)
 {
     while (!(module->STATUS & USART_DREIF_bm));
     module->DATA = data;

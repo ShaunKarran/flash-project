@@ -72,7 +72,7 @@ int main(void) {
         gl_draw_elements(cube.num_vertex_indices);
 
         st7565r_write_array(frame_buffer.data, frame_buffer.size);
-        fbuff_clear(frame_buffer);
+        fbuff_clear(&frame_buffer);
 
         gpio_tgl_pin(led0);
         // _delay_ms(30); /* ~30fps */

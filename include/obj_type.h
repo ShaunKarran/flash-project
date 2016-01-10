@@ -1,6 +1,5 @@
 
-#ifndef _OBJ_TYPE_H_
-#define _OBJ_TYPE_H_
+#pragma once
 
 // struct OBJ_t {
 //     size_t   num_vertices;
@@ -23,5 +22,3 @@ struct OBJ_t {
     size_t   num_normal_indices;
     uint16_t normal_indices[36];
 };
-
-#endif /* _OBJ_TYPE_H_ */

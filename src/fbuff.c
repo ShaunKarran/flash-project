@@ -46,7 +46,7 @@ bool fbuff_set_pixel(uint16_t x, uint16_t y, struct FBUFF_Buffer_t *frame_buffer
     size_t byte = y / 8 * frame_buffer->width + x;
     uint8_t bit = y % 8;
 
-    set_bit(frame_buffer->data[byte], bit);
+    set_bit((frame_buffer->data + byte), bit);
 
     return true;
 }
@@ -62,7 +62,7 @@ bool fbuff_clr_pixel(uint16_t x, uint16_t y, struct FBUFF_Buffer_t *frame_buffer
     size_t byte = y / 8 * frame_buffer->width + x;
     char bit = y % 8;
 
-    clr_bit(frame_buffer->data[byte], bit);
+    clr_bit((frame_buffer->data + byte), bit);
 
     return true;
 }

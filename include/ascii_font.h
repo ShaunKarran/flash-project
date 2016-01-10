@@ -8,10 +8,10 @@
 
 // Includes -------------------------------------------------------------------
 
-#ifndef _ASCII_FONT_H
-#define _ASCII_FONT_H
+#pragma once
 
 #include <avr/pgmspace.h>
+#include <stdint.h>
 
 #define FONT_CHAR_WIDTH  5
 #define FONT_CHAR_HEIGHT 8
@@ -20,7 +20,7 @@
 
 //This table contains the hex values that represent pixels
 //for a font that is 5 pixels wide and 8 pixels high
-static const char ASCII_FONT[][FONT_CHAR_WIDTH] PROGMEM = {
+static const uint8_t ASCII_FONT[][FONT_CHAR_WIDTH] PROGMEM = {
      {0x00, 0x00, 0x00, 0x00, 0x00} // 0x20
     ,{0x00, 0x00, 0x5f, 0x00, 0x00} // 0x21 !
     ,{0x00, 0x07, 0x00, 0x07, 0x00} // 0x22 "
@@ -118,5 +118,3 @@ static const char ASCII_FONT[][FONT_CHAR_WIDTH] PROGMEM = {
     ,{0x10, 0x08, 0x08, 0x10, 0x08} // 0x7e ~
     ,{0x78, 0x46, 0x41, 0x46, 0x78} // 0x7f DEL
 };
-
-#endif //_ASCII_FONT_H

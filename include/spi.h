@@ -1,9 +1,9 @@
 
-#ifndef _SPI_H_
-#define _SPI_H_
+#pragma once
 
 #include <avr/io.h>
 #include <stdbool.h>
+#include <stdint.h>
 
 #define SPI_SS_bm   PIN4_bm
 #define SPI_MOSI_bm PIN5_bm
@@ -23,8 +23,6 @@ void spi_init_master(struct SPI_Master_t *spi,
                      bool                clk2x,
                      bool                lsb_first);
 
-void spi_write(struct SPI_Master_t *spi, unsigned char data);
+void spi_write(struct SPI_Master_t *spi, uint8_t data);
 
-unsigned char spi_read(struct SPI_Master_t *spi);
-
-#endif /* _SPI_H_ */
+uint8_t spi_read(struct SPI_Master_t *spi);

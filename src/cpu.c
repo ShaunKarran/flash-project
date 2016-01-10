@@ -1,7 +1,7 @@
 
 #include "cpu.h"
 
-void cpu_set_speed(unsigned char speed)
+void cpu_set_speed(cpu_speed_t speed)
 {
 	switch (speed) {
 		case CPU_32MHz:

@@ -1,7 +1,7 @@
 
 #include "gpio.h"
 
-gpio_pin_t gpio_create_pin(PORT_t *port, unsigned char pin_bm)
+gpio_pin_t gpio_create_pin(PORT_t *port, uint8_t pin_bm)
 {
     gpio_pin_t pin;
 

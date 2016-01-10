@@ -1,12 +1,9 @@
 
-#ifndef _CPU_H_
-#define _CPU_H_
+#pragma once
 
 #include <avr/io.h>
+#include <stdint.h>
 
-#define CPU_2MHz  0
-#define CPU_32MHz 1
+typedef enum { CPU_2MHZ, CPU_32MHz } cpu_speed_t;
 
-void cpu_set_speed(unsigned char speed);
-
-#endif /* _CPU_H_ */
+void cpu_set_speed(cpu_speed_t speed);

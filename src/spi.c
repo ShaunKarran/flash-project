@@ -22,13 +22,13 @@ void spi_init_master(struct SPI_Master_t *spi,
     spi->port->DIRSET = SPI_MOSI_bm | SPI_SS_bm | SPI_SCK_bm;
 }
 
-void spi_write(struct SPI_Master_t *spi, unsigned char data)
+void spi_write(struct SPI_Master_t *spi, uint8_t data)
 {
     spi->module->DATA = data;
     while (~spi->module->STATUS & SPI_IF_bm); /* Wait for write to complete. */
 }
 
-unsigned char spi_read(struct SPI_Master_t *spi)
+uint8_t spi_read(struct SPI_Master_t *spi)
 {
     while (~spi->module->STATUS & SPI_IF_bm);
     return spi->module->DATA;
