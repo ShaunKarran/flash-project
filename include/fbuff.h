@@ -15,7 +15,6 @@
 #include <string.h>
 
 #include "bitwise.h"
-#include "st7565r.h"
 
 struct FBUFF_Buffer_t {
     uint16_t width;
