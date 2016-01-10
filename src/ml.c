@@ -42,37 +42,60 @@ void ml_multiply_mat3_mat3(float mat_a[][3], float mat_b[][3], float out[][3])
 {
     float temp[3][3];
 
-    for (int m = 0; m < 3; m++) {
-        for (int n = 0; n < 3; n++) {
-            temp[m][n] = mat_a[m][0] * mat_b[0][n] + mat_a[m][1] * mat_b[1][n] + mat_a[m][2] * mat_b[2][n];
-        }
-    }
+    temp[0][0] = mat_a[0][0] * mat_b[0][0] + mat_a[0][1] * mat_b[1][0] + mat_a[0][2] * mat_b[2][0];
+    temp[0][1] = mat_a[0][0] * mat_b[0][1] + mat_a[0][1] * mat_b[1][1] + mat_a[0][2] * mat_b[2][1];
+    temp[0][2] = mat_a[0][0] * mat_b[0][2] + mat_a[0][1] * mat_b[1][2] + mat_a[0][2] * mat_b[2][2];
+    temp[1][0] = mat_a[1][0] * mat_b[0][0] + mat_a[1][1] * mat_b[1][0] + mat_a[1][2] * mat_b[2][0];
+    temp[1][1] = mat_a[1][0] * mat_b[0][1] + mat_a[1][1] * mat_b[1][1] + mat_a[1][2] * mat_b[2][1];
+    temp[1][2] = mat_a[1][0] * mat_b[0][2] + mat_a[1][1] * mat_b[1][2] + mat_a[1][2] * mat_b[2][2];
+    temp[2][0] = mat_a[2][0] * mat_b[0][0] + mat_a[2][1] * mat_b[1][0] + mat_a[2][2] * mat_b[2][0];
+    temp[2][1] = mat_a[2][0] * mat_b[0][1] + mat_a[2][1] * mat_b[1][1] + mat_a[2][2] * mat_b[2][1];
+    temp[2][2] = mat_a[2][0] * mat_b[0][2] + mat_a[2][1] * mat_b[1][2] + mat_a[2][2] * mat_b[2][2];
 
-    for (int m = 0; m < 3; m++) {
-        for (int n = 0; n < 3; n++) {
-            out[m][n] = temp[m][n];
-        }
-    }
+    out[0][0] = temp[0][0];
+    out[0][1] = temp[0][1];
+    out[0][2] = temp[0][2];
+    out[1][0] = temp[1][0];
+    out[1][1] = temp[1][1];
+    out[1][2] = temp[1][2];
+    out[2][0] = temp[2][0];
+    out[2][1] = temp[2][1];
+    out[2][2] = temp[2][2];
 }
 
 void ml_multiply_mat4_mat4(float mat_a[][4], float mat_b[][4], float out[][4])
 {
     float temp[4][4];
 
-    for (int m = 0; m < 4; m++) {
-        for (int n = 0; n < 4; n++) {
-            temp[m][n] =    mat_a[m][0] * mat_b[0][n] +
-                            mat_a[m][1] * mat_b[1][n] +
-                            mat_a[m][2] * mat_b[2][n] +
-                            mat_a[m][3] * mat_b[3][n];
-        }
-    }
+    temp[0][0] = mat_a[0][0] * mat_b[0][0] + mat_a[0][1] * mat_b[1][0] + mat_a[0][2] * mat_b[2][0] + mat_a[0][3] * mat_b[3][0];
+    temp[0][1] = mat_a[0][0] * mat_b[0][1] + mat_a[0][1] * mat_b[1][1] + mat_a[0][2] * mat_b[2][1] + mat_a[0][3] * mat_b[3][1];
+    temp[0][2] = mat_a[0][0] * mat_b[0][2] + mat_a[0][1] * mat_b[1][2] + mat_a[0][2] * mat_b[2][2] + mat_a[0][3] * mat_b[3][2];
+    temp[0][3] = mat_a[0][0] * mat_b[0][3] + mat_a[0][1] * mat_b[1][3] + mat_a[0][2] * mat_b[2][3] + mat_a[0][3] * mat_b[3][3];
+    temp[1][0] = mat_a[1][0] * mat_b[0][0] + mat_a[1][1] * mat_b[1][0] + mat_a[1][2] * mat_b[2][0] + mat_a[1][3] * mat_b[3][0];
+    temp[1][1] = mat_a[1][0] * mat_b[0][1] + mat_a[1][1] * mat_b[1][1] + mat_a[1][2] * mat_b[2][1] + mat_a[1][3] * mat_b[3][1];
+    temp[1][2] = mat_a[1][0] * mat_b[0][2] + mat_a[1][1] * mat_b[1][2] + mat_a[1][2] * mat_b[2][2] + mat_a[1][3] * mat_b[3][2];
+    temp[1][3] = mat_a[1][0] * mat_b[0][3] + mat_a[1][1] * mat_b[1][3] + mat_a[1][2] * mat_b[2][3] + mat_a[1][3] * mat_b[3][3];
+    temp[2][0] = mat_a[2][0] * mat_b[0][0] + mat_a[2][1] * mat_b[1][0] + mat_a[2][2] * mat_b[2][0] + mat_a[2][3] * mat_b[3][0];
+    temp[2][1] = mat_a[2][0] * mat_b[0][1] + mat_a[2][1] * mat_b[1][1] + mat_a[2][2] * mat_b[2][1] + mat_a[2][3] * mat_b[3][1];
+    temp[2][2] = mat_a[2][0] * mat_b[0][2] + mat_a[2][1] * mat_b[1][2] + mat_a[2][2] * mat_b[2][2] + mat_a[2][3] * mat_b[3][2];
+    temp[2][3] = mat_a[2][0] * mat_b[0][3] + mat_a[2][1] * mat_b[1][3] + mat_a[2][2] * mat_b[2][3] + mat_a[2][3] * mat_b[3][3];
+    temp[3][0] = mat_a[3][0] * mat_b[0][0] + mat_a[3][1] * mat_b[1][0] + mat_a[3][2] * mat_b[2][0] + mat_a[3][3] * mat_b[3][0];
+    temp[3][1] = mat_a[3][0] * mat_b[0][1] + mat_a[3][1] * mat_b[1][1] + mat_a[3][2] * mat_b[2][1] + mat_a[3][3] * mat_b[3][1];
+    temp[3][2] = mat_a[3][0] * mat_b[0][2] + mat_a[3][1] * mat_b[1][2] + mat_a[3][2] * mat_b[2][2] + mat_a[3][3] * mat_b[3][2];
+    temp[3][3] = mat_a[3][0] * mat_b[0][3] + mat_a[3][1] * mat_b[1][3] + mat_a[3][2] * mat_b[2][3] + mat_a[3][3] * mat_b[3][3];
 
-    for (int m = 0; m < 4; m++) {
-        for (int n = 0; n < 4; n++) {
-            out[m][n] = temp[m][n];
-        }
-    }
+    out[0][0] = temp[0][0];
+    out[0][1] = temp[0][1];
+    out[0][2] = temp[0][2];
+    out[0][3] = temp[0][3];
+    out[1][0] = temp[1][0];
+    out[1][1] = temp[1][1];
+    out[1][2] = temp[1][2];
+    out[1][3] = temp[1][3];
+    out[2][0] = temp[2][0];
+    out[2][1] = temp[2][1];
+    out[2][2] = temp[2][2];
+    out[2][3] = temp[2][3];
 }
 
 void ml_multiply_mat3_vec3(float mat[][3], float vec[3], float out[3])

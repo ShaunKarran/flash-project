@@ -46,16 +46,33 @@ int main(void) {
     float mv_matrix[4][4];
     gl_bind_mvmatrix(mv_matrix);
 
-    int8_t  x = 0, y = 0, z = 0;
+    int8_t  x1 = -1, x2 = 0, x3 = 1, z = -2;
+    float   rotx = 0, roty = 0, rotz = 0;
     while (1) {
-        ml_mat4_identity(mv_matrix);
-
-        ml_translate(mv_matrix, x, y, z);
-
         gl_bind_vert_array(cube.vertices);
         gl_bind_vert_index_array(cube.vertex_indices);
 
+        rotx = (rotx > 360) ? 0 : rotx + 1;
+        roty = (roty > 360) ? 0 : roty + 1;
+        rotz = (rotz > 360) ? 0 : rotz + 1;
+
+        ml_mat4_identity(mv_matrix);
+        ml_rotate_x(mv_matrix, rotx);
+        ml_translate(mv_matrix, x1, 0, z);
         gl_draw_elements(cube.num_vertex_indices);
+
+        ml_mat4_identity(mv_matrix);
+        ml_rotate_y(mv_matrix, roty);
+        ml_translate(mv_matrix, x2, 0, z);
+        gl_draw_elements(cube.num_vertex_indices);
+
+        ml_mat4_identity(mv_matrix);
+        ml_rotate_z(mv_matrix, rotz);
+        ml_translate(mv_matrix, x3, 0, z);
+        gl_draw_elements(cube.num_vertex_indices);
+
+        st7565r_write_array(frame_buffer.data, frame_buffer.size);
+        fbuff_clear(frame_buffer);
 
         gpio_tgl_pin(led0);
         // _delay_ms(30); /* ~30fps */

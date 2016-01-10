@@ -186,9 +186,6 @@ void gl_draw_elements(size_t num_elements)
         gl_draw_line(vertex3_b[0], vertex3_b[1], vertex3_c[0], vertex3_c[1]);
         gl_draw_line(vertex3_a[0], vertex3_a[1], vertex3_c[0], vertex3_c[1]);
     }
-
-    render(frame_buffer->data, frame_buffer->size);
-    fbuff_clear(frame_buffer);
 }
 
 // static void gl_draw_lines(size_t array_size)
