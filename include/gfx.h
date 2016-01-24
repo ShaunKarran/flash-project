@@ -23,7 +23,7 @@ struct GFX_Sprite_t {
 };
 
 // Function Prototypes --------------------------------------------------------
-void gfx_bind_buffer(struct FBUF_Buffer_t *buffer);
+void gfx_frame_buffer(struct FBUF_Buffer_t *buffer);
 
 struct GFX_Sprite_t gfx_create_sprite(uint8_t *bitmap, uint16_t width, uint16_t height);
 

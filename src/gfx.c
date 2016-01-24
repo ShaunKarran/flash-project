@@ -11,10 +11,10 @@
 
 #include "gfx.h"
 
-static struct FBUF_Buffer_t *FRAME_BUFFER;
+struct FBUF_Buffer_t *FRAME_BUFFER;
 
 // Function Definitions -------------------------------------------------------
-void gfx_bind_buffer(struct FBUF_Buffer_t *buffer)
+void gfx_frame_buffer(struct FBUF_Buffer_t *buffer)
 {
 	FRAME_BUFFER = buffer;
 }
