@@ -11,21 +11,45 @@
 
 #include "gl.h"
 
-static struct FBUF_Buffer_t *FRAME_BUFFER;
-static void (*render)(uint8_t *, size_t);
+struct FBUF_Buffer_t *FRAME_BUFFER;
 
-static float    *VERT_ARRAY;           /* Points to users array of vertices. */
-static uint16_t *VERT_INDEX_ARRAY;
-static float    *NORM_ARRAY;
-static uint16_t *NORM_INDEX_ARRAY;
-static float    (*MV_MATRIX)[4];    /* Model-View matrix. To transform to eye coordinates. */
-static float    P_MATRIX[4][4];     /* Projection matrix. To transform to clip coordinates. */
-static float    V_MATRIX[3][3];     /* View matrix. To transform to screen coordinates. */
+float    *VERTICES;           /* Points to users array of vertices. */
+uint16_t *VERTEX_INDICES;
+float    *NORMALS;
+uint16_t *NORMAL_INDICES;
 
-void gl_init(struct FBUF_Buffer_t *buffer, void (*render_function)(unsigned char *, size_t))
+float    (*MV_MATRIX)[4];    /* Model-View matrix. To transform to eye coordinates. */
+float    P_MATRIX[4][4];     /* Projection matrix. To transform to clip coordinates. */
+float    V_MATRIX[3][3];     /* View matrix. To transform to screen coordinates. */
+
+void gl_frame_buffer(struct FBUF_Buffer_t *buffer)
 {
     FRAME_BUFFER = buffer;
-    render = render_function;
+}
+
+void gl_vertex_array(float *vertices)
+{
+    VERTICES = vertices;
+}
+
+void gl_vertex_index_array(uint16_t *vertex_indices)
+{
+    VERTEX_INDICES = vertex_indices;
+}
+
+void gl_normal_array(float *normals)
+{
+    NORMALS = normals;
+}
+
+void gl_normal_index_array(uint16_t *normal_indices)
+{
+    NORMAL_INDICES = normal_indices;
+}
+
+void gl_mvmatrix(float mv_matrix[][4])
+{
+    MV_MATRIX = mv_matrix;
 }
 
 void gl_viewport(uint16_t x, uint16_t y, uint16_t width, uint16_t height)
@@ -77,31 +101,6 @@ void gl_perspective_fov(float fov_y, float aspect_ratio, float near, float far)
     P_MATRIX[3][2] = -1;
 }
 
-void gl_bind_vert_array(float array[])
-{
-    VERT_ARRAY = array;
-}
-
-void gl_bind_vert_index_array(uint16_t array[])
-{
-    VERT_INDEX_ARRAY = array;
-}
-
-void gl_bind_norm_array(float array[])
-{
-    NORM_ARRAY = array;
-}
-
-void gl_bind_norm_index_array(uint16_t array[])
-{
-    NORM_INDEX_ARRAY = array;
-}
-
-void gl_bind_mvmatrix(float mv_matrix[][4])
-{
-    MV_MATRIX = mv_matrix;
-}
-
 // void gl_draw(size_t array_size)
 // {
 //     float  vertex4[4];
@@ -110,9 +109,9 @@ void gl_bind_mvmatrix(float mv_matrix[][4])
 //     TEMP_VERTICES = (float *)realloc(TEMP_VERTICES, array_size * sizeof(float));
 //
 //     for (size_t i = 0; i < array_size - 2; i += 3) {
-//         vertex4[0] = VERT_ARRAY[i];
-//         vertex4[1] = VERT_ARRAY[i + 1];
-//         vertex4[2] = VERT_ARRAY[i + 2];
+//         vertex4[0] = VERTICES[i];
+//         vertex4[1] = VERTICES[i + 1];
+//         vertex4[2] = VERTICES[i + 2];
 //         vertex4[3] = 1;
 //
 //         ml_multiply_mat4_vec4(MV_MATRIX, vertex4, vertex4);
@@ -148,22 +147,22 @@ void gl_draw_elements(size_t num_elements)
     size_t index;
 
     for (size_t i = 0; i < num_elements - 1; i += 3) { // Draw 1 face per loop.
-        index = (VERT_INDEX_ARRAY[i] - 1) * 3; // OBJs use 1-indexing.
-        vertex4_a[0] = VERT_ARRAY[index];
-        vertex4_a[1] = VERT_ARRAY[index + 1];
-        vertex4_a[2] = VERT_ARRAY[index + 2];
+        index = (VERTEX_INDICES[i] - 1) * 3; // OBJs use 1-indexing.
+        vertex4_a[0] = VERTICES[index];
+        vertex4_a[1] = VERTICES[index + 1];
+        vertex4_a[2] = VERTICES[index + 2];
         vertex4_a[3] = 1;
 
-        index = (VERT_INDEX_ARRAY[i + 1] - 1) * 3; // OBJs use 1-indexing.
-        vertex4_b[0] = VERT_ARRAY[index];
-        vertex4_b[1] = VERT_ARRAY[index + 1];
-        vertex4_b[2] = VERT_ARRAY[index + 2];
+        index = (VERTEX_INDICES[i + 1] - 1) * 3; // OBJs use 1-indexing.
+        vertex4_b[0] = VERTICES[index];
+        vertex4_b[1] = VERTICES[index + 1];
+        vertex4_b[2] = VERTICES[index + 2];
         vertex4_b[3] = 1;
 
-        index = (VERT_INDEX_ARRAY[i + 2] - 1) * 3; // OBJs use 1-indexing.
-        vertex4_c[0] = VERT_ARRAY[index];
-        vertex4_c[1] = VERT_ARRAY[index + 1];
-        vertex4_c[2] = VERT_ARRAY[index + 2];
+        index = (VERTEX_INDICES[i + 2] - 1) * 3; // OBJs use 1-indexing.
+        vertex4_c[0] = VERTICES[index];
+        vertex4_c[1] = VERTICES[index + 1];
+        vertex4_c[2] = VERTICES[index + 2];
         vertex4_c[3] = 1;
 
         ml_multiply_mat4_vec4(MV_MATRIX, vertex4_a, vertex4_a);
