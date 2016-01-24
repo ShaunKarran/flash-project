@@ -16,21 +16,21 @@
 
 #include "bitwise.h"
 
-struct FBUFF_Buffer_t {
+struct FBUF_Buffer_t {
     uint16_t width;
     uint16_t height;
     size_t   size;
     uint8_t  *data;
 };
 
-bool fbuff_init(struct FBUFF_Buffer_t *frame_buffer, uint16_t width, uint16_t height);
+bool fbuf_init(struct FBUF_Buffer_t *frame_buffer, uint16_t width, uint16_t height);
 
-void fbuff_clear(struct FBUFF_Buffer_t *frame_buffer);
+void fbuf_clear(struct FBUF_Buffer_t *frame_buffer);
 
-void fbuff_fill(struct FBUFF_Buffer_t *frame_buffer);
+void fbuf_fill(struct FBUF_Buffer_t *frame_buffer);
 
-bool fbuff_set_pixel(uint16_t x, uint16_t y, struct FBUFF_Buffer_t *frame_buffer);
+bool fbuf_set_pixel(uint16_t x, uint16_t y, struct FBUF_Buffer_t *frame_buffer);
 
-bool fbuff_clr_pixel(uint16_t x, uint16_t y, struct FBUFF_Buffer_t *frame_buffer);
+bool fbuf_clr_pixel(uint16_t x, uint16_t y, struct FBUF_Buffer_t *frame_buffer);
 
 // void fbuff_fill_faces(struct FBUFF_Buffer_t *frame_buffer);

@@ -11,10 +11,10 @@
 
 #include <stdint.h>
 
-#include "fbuff.h"
+#include "fbuf.h"
 #include "ml.h"
 
-void gl_init(struct FBUFF_Buffer_t *buffer, void (*render_function)(unsigned char *, size_t));
+void gl_init(struct FBUF_Buffer_t *buffer, void (*render_function)(unsigned char *, size_t));
 
 void gl_viewport(uint16_t x, uint16_t y, uint16_t width, uint16_t height);
 

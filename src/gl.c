@@ -11,7 +11,7 @@
 
 #include "gl.h"
 
-static struct FBUFF_Buffer_t *frame_buffer;
+static struct FBUF_Buffer_t *FRAME_BUFFER;
 static void (*render)(uint8_t *, size_t);
 
 static float    *VERT_ARRAY;           /* Points to users array of vertices. */
@@ -22,9 +22,9 @@ static float    (*MV_MATRIX)[4];    /* Model-View matrix. To transform to eye co
 static float    P_MATRIX[4][4];     /* Projection matrix. To transform to clip coordinates. */
 static float    V_MATRIX[3][3];     /* View matrix. To transform to screen coordinates. */
 
-void gl_init(struct FBUFF_Buffer_t *buffer, void (*render_function)(unsigned char *, size_t))
+void gl_init(struct FBUF_Buffer_t *buffer, void (*render_function)(unsigned char *, size_t))
 {
-    frame_buffer = buffer;
+    FRAME_BUFFER = buffer;
     render = render_function;
 }
 
@@ -133,8 +133,8 @@ void gl_bind_mvmatrix(float mv_matrix[][4])
 //
 //     gl_draw_lines(array_size);
 //
-//     render(frame_buffer->buffer, frame_buffer->size);
-//     fbuff_clear(frame_buffer);
+//     render(FRAME_BUFFER->buffer, FRAME_BUFFER->size);
+//     fbuff_clear(FRAME_BUFFER);
 // }
 
 void gl_draw_elements(size_t num_elements)
@@ -214,7 +214,7 @@ void gl_draw_line(float x1f, float y1f, float x2f, float y2f)
 	int8_t shift_y = (y1 < y2) ? 1 : -1;
 
 	while (1) {
-		fbuff_set_pixel(x1, y1, frame_buffer);
+		fbuf_set_pixel(x1, y1, FRAME_BUFFER);
 
 		if ((x1 == x2) && (y1 == y2)) {
 			break;

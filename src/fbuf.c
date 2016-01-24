@@ -9,9 +9,9 @@
 
 // Includes -------------------------------------------------------------------
 
-#include "fbuff.h"
+#include "fbuf.h"
 
-bool fbuff_init(struct FBUFF_Buffer_t *frame_buffer, uint16_t width, uint16_t height)
+bool fbuf_init(struct FBUF_Buffer_t *frame_buffer, uint16_t width, uint16_t height)
 {
     frame_buffer->width  = width;
     frame_buffer->height = height;
@@ -25,17 +25,17 @@ bool fbuff_init(struct FBUFF_Buffer_t *frame_buffer, uint16_t width, uint16_t he
     }
 }
 
-void fbuff_clear(struct FBUFF_Buffer_t *frame_buffer)
+void fbuf_clear(struct FBUF_Buffer_t *frame_buffer)
 {
     memset(frame_buffer->data, 0x00, frame_buffer->size);
 }
 
-void fbuff_fill(struct FBUFF_Buffer_t *frame_buffer)
+void fbuf_fill(struct FBUF_Buffer_t *frame_buffer)
 {
     memset(frame_buffer->data, 0xFF, frame_buffer->size);
 }
 
-bool fbuff_set_pixel(uint16_t x, uint16_t y, struct FBUFF_Buffer_t *frame_buffer)
+bool fbuf_set_pixel(uint16_t x, uint16_t y, struct FBUF_Buffer_t *frame_buffer)
 {
     /* Position is outside of the buffer. */
     if (x < 0 || x >= frame_buffer->width ||
@@ -51,7 +51,7 @@ bool fbuff_set_pixel(uint16_t x, uint16_t y, struct FBUFF_Buffer_t *frame_buffer
     return true;
 }
 
-bool fbuff_clr_pixel(uint16_t x, uint16_t y, struct FBUFF_Buffer_t *frame_buffer)
+bool fbuf_clr_pixel(uint16_t x, uint16_t y, struct FBUF_Buffer_t *frame_buffer)
 {
     /* Position is outside of the buffer. */
     if (x < 0 || x >= frame_buffer->width ||
@@ -68,7 +68,7 @@ bool fbuff_clr_pixel(uint16_t x, uint16_t y, struct FBUFF_Buffer_t *frame_buffer
 }
 
 // Not currently working.
-// void fbuff_fill_faces(struct FBUFF_Buffer_t *frame_buffer)
+// void fbuf_fill_faces(struct FBUF_Buffer_t *frame_buffer)
 // {
 //     size_t buffer_position;
 //     bool previous_pixel = false;

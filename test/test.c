@@ -4,7 +4,7 @@
 #include <util/delay.h>
 
 #include "cpu.h"
-#include "fbuff.h"
+#include "fbuf.h"
 #include "gl.h"
 // #include "gfx.h"
 #include "gpio.h"
@@ -35,8 +35,8 @@ int main(void) {
     gpio_set_pin(lcd_backlight);
     st7565r_init(lcd_data, lcd_clock, lcd_chip_select, lcd_a0, lcd_reset);
 
-    struct FBUFF_Buffer_t frame_buffer;
-    fbuff_init(&frame_buffer, ST7565R_WIDTH, ST7565R_HEIGHT);
+    struct FBUF_Buffer_t frame_buffer;
+    fbuf_init(&frame_buffer, ST7565R_WIDTH, ST7565R_HEIGHT);
 
     gl_init(&frame_buffer, st7565r_write_array);
     gl_viewport(0, 0, ST7565R_WIDTH, ST7565R_HEIGHT);
@@ -72,7 +72,7 @@ int main(void) {
         gl_draw_elements(cube.num_vertex_indices);
 
         st7565r_write_array(frame_buffer.data, frame_buffer.size);
-        fbuff_clear(&frame_buffer);
+        fbuf_clear(&frame_buffer);
 
         gpio_tgl_pin(led0);
         // _delay_ms(30); /* ~30fps */
