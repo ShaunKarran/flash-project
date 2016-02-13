@@ -18,9 +18,9 @@ uint16_t *VERTEX_INDICES;
 float    *NORMALS;
 uint16_t *NORMAL_INDICES;
 
-float    (*MV_MATRIX)[4];    /* Model-View matrix. To transform to eye coordinates. */
-float    P_MATRIX[4][4];     /* Projection matrix. To transform to clip coordinates. */
-float    V_MATRIX[3][3];     /* View matrix. To transform to screen coordinates. */
+float    *MV_MATRIX;    /* Model-View matrix. To transform to eye coordinates. */
+float    P_MATRIX[16];     /* Projection matrix. To transform to clip coordinates. */
+float    V_MATRIX[9];     /* View matrix. To transform to screen coordinates. */
 
 void gl_frame_buffer(struct FBUF_Buffer_t *buffer)
 {
@@ -47,7 +47,7 @@ void gl_normal_index_array(uint16_t *normal_indices)
     NORMAL_INDICES = normal_indices;
 }
 
-void gl_mvmatrix(float mv_matrix[][4])
+void gl_mvmatrix(float mv_matrix[16])
 {
     MV_MATRIX = mv_matrix;
 }
@@ -58,35 +58,35 @@ void gl_viewport(uint16_t x, uint16_t y, uint16_t width, uint16_t height)
 
     width  = width - 1;
     height = height - 1;
-    V_MATRIX[0][2] = width  / 2.0f + x; /* Move to location of viewport. */
-    V_MATRIX[1][2] = height / 2.0f + y;
-    V_MATRIX[0][0] = width  / 2.0f; /* Scale to size of viewport. */
-    V_MATRIX[1][1] = height / 2.0f;
+    V_MATRIX[2] = width  / 2.0f + x; /* Move to location of viewport. */
+    V_MATRIX[5] = height / 2.0f + y;
+    V_MATRIX[0] = width  / 2.0f; /* Scale to size of viewport. */
+    V_MATRIX[4] = height / 2.0f;
 }
 
 void gl_orthographic(float left, float right, float bottom, float top, float near, float far)
 {
     ml_mat4_identity(P_MATRIX);
 
-    P_MATRIX[0][0] =  2.0f / (right - left);
-    P_MATRIX[1][1] =  2.0f / (top - bottom);
-    P_MATRIX[2][2] = -2.0f / (far - near);
-    P_MATRIX[0][3] = -(right + left) / (right - left);
-    P_MATRIX[1][3] = -(top + bottom) / (top - bottom);
-    P_MATRIX[2][3] = -(far + near) / (far - near);
+    P_MATRIX[0] =  2.0f / (right - left);
+    P_MATRIX[5] =  2.0f / (top - bottom);
+    P_MATRIX[10] = -2.0f / (far - near);
+    P_MATRIX[3] = -(right + left) / (right - left);
+    P_MATRIX[7] = -(top + bottom) / (top - bottom);
+    P_MATRIX[11] = -(far + near) / (far - near);
 }
 
 void gl_perspective(float left, float right, float bottom, float top, float near, float far)
 {
     ml_mat4_identity(P_MATRIX);
 
-    P_MATRIX[0][0] = 2 * near / (right - left);
-    P_MATRIX[1][1] = 2 * near / (top - bottom);
-    P_MATRIX[2][2] = -(far + near) / (far - near);
-    P_MATRIX[0][2] = (right + left) / (right - left);
-    P_MATRIX[1][2] = (top + bottom) / (top - bottom);
-    P_MATRIX[2][3] = -(2 * far * near) / (far - near);
-    P_MATRIX[3][2] = -1;
+    P_MATRIX[0] = 2 * near / (right - left);
+    P_MATRIX[5] = 2 * near / (top - bottom);
+    P_MATRIX[10] = -(far + near) / (far - near);
+    P_MATRIX[2] = (right + left) / (right - left);
+    P_MATRIX[6] = (top + bottom) / (top - bottom);
+    P_MATRIX[11] = -(2 * far * near) / (far - near);
+    P_MATRIX[14] = -1;
 }
 
 void gl_perspective_fov(float fov_y, float aspect_ratio, float near, float far)
@@ -94,11 +94,11 @@ void gl_perspective_fov(float fov_y, float aspect_ratio, float near, float far)
     ml_mat4_identity(P_MATRIX);
 
     float f = 1 / tan(fov_y / 2);
-    P_MATRIX[0][0] = f / aspect_ratio;
-    P_MATRIX[1][1] = f;
-    P_MATRIX[2][2] = (far + near) / (near - far);
-    P_MATRIX[2][3] = (2 * far * near) / (near - far);
-    P_MATRIX[3][2] = -1;
+    P_MATRIX[0] = f / aspect_ratio;
+    P_MATRIX[5] = f;
+    P_MATRIX[10] = (far + near) / (near - far);
+    P_MATRIX[11] = (2 * far * near) / (near - far);
+    P_MATRIX[14] = -1;
 }
 
 // void gl_draw(size_t array_size)

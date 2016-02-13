@@ -24,7 +24,7 @@ void gl_normal_array(float *normals);
 
 void gl_normal_index_array(uint16_t *normal_indices);
 
-void gl_mvmatrix(float mv_matrix[][4]);
+void gl_mvmatrix(float mv_matrix[16]);
 
 void gl_viewport(uint16_t x, uint16_t y, uint16_t width, uint16_t height);
 
