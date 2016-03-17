@@ -7,7 +7,7 @@
  *	Created:		November 2015
 */
 
-#pragma onceasdfasdfsa
+#pragma once
 
 #include <stdint.h>
 
